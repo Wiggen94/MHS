@@ -1,6 +1,62 @@
-# MHS
+# Project Title
 
-Last ned repository, pakk ut, åpne cmd 
-bruk cd kommando til å gå i mappen.
+One Paragraph of project description goes here
 
-Kjør npm install
+## Kom i gang
+
+Disse instruksjonene vil hjelpe deg med å komme i gang med MHS på din lokale maskin for utvikling og testing.
+
+Instruksjoner for å sette opp MHS i et live-miljø vil komme senere.
+
+### På forhånd
+
+På forhånd må du ha installert Homebrew(for mac) og nodejs.
+
+```
+Give examples
+```
+På Windows installerer du nodejs ved å laste ned fra
+https://nodejs.org/en/
+
+På Mac åpner du terminal og skriver følgende
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+```
+Deretter skriver du følgende i terminal
+```
+brew install node
+
+```
+
+
+### Installere
+
+For å sette opp et utviklermiljø på din egen datamaskin gjør du følgende
+
+```
+Last ned repository fra denne GitHuben
+Åpne kommandovinduet ditt å bruk cd "%STINAVN%" for å komme til riktig mappe
+For eksempel "cd C:\Users\USERNAME\master".
+```
+Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til nodejs for å kjøre prosjektet
+
+```
+Skriv npm install i kommandovinduet
+Bruk "nodemon server.js" for å kjøre server.js
+```
+
+For å vise klientsiden av programmet kan du enten gå til
+http://localhost:8080
+
+Eller du kan bruke nativefier for å oprette en kjørbar fil ved å skrive følgende i kommandovinduet
+
+```
+nativefier http://localhost:8080
+```
+
+Du skal etter dette ha fått en ny mappe som heter noe lignende som "APP-win32-x64", denne mappen vil ha noe annet navn på OS X.
+I denne mappen er det en fil som heter App som vil kjøre prosjektet som et program istedenfor en nettside ved å bruke electronjs.
+## Oppsett
+
+Kommer senere
