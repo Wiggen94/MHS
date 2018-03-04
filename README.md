@@ -1,6 +1,6 @@
-# Project Title
+# MHS
 
-One Paragraph of project description goes here
+Dette er et prosjekt som omhandler å skape et system for administrering av arrangementer og vakter
 
 ## Kom i gang
 
@@ -12,9 +12,6 @@ Instruksjoner for å sette opp MHS i et live-miljø vil komme senere.
 
 På forhånd må du ha installert Homebrew(for mac) og nodejs.
 
-```
-Give examples
-```
 På Windows installerer du nodejs ved å laste ned fra
 https://nodejs.org/en/
 
