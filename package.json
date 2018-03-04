@@ -13,6 +13,7 @@
     "mongoose": "^5.0.7",
     "mysql": "",
     "morgan": "~1.7.0",
+    "nativefier": "",
     "nodemon": "^1.15.1",
     "passport": "~0.3.2",
     "passport-facebook": "~2.1.1",
