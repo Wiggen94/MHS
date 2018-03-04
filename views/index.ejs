@@ -1,28 +1,70 @@
 <!-- views/index.ejs -->
 <!doctype html>
 <html>
+
 <head>
-    <title>Node Authentication</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <style>
-        body        { padding-top:80px; }
-    </style>
+  <title>Mannskapshåndteringssystem</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<div class="container">
+  <div class="container  jumbotron">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Røde Kors</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Forside</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
+        <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Min profil</a></li>
+              <li><a href="#">Endre profil</a></li>
+            </ul>
+          </li>
+          <li><a href="/inbox">Meldinger</a></li>
+        </ul>
+      </div>
+    </nav>
 
-    <div class="jumbotron text-center">
-        <h1><span class="fa fa-lock"></span> Node Authentication</h1>
 
-        <p>Login or Register with:</p>
+    <div class="jumbotron text-center" id="header">
+      <div class="jumbotron text-left" id="logginn">
+          <p>Logg inn eller registrer:</p>
+        <!-- LOGIN FORM -->
+        <form action="/login" method="post">
+          <div class="form-group">
+            <label>E-post</label>
+            <input type="text" class="form-control" name="email">
+          </div>
+          <div class="form-group">
+            <label>Passord</label>
+            <input type="password" class="form-control" name="password">
+          </div>
 
-        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span> Local Login</a>
-        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Local Signup</a>
-        <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
-        <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google+</a>
+          <button type="submit" class="btn btn-warning btn-lg">Logg inn</button>
+        </form>
+
+        <hr>
+        <p>Logg inn med </br>
+          <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+          <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google+</a></p>
+        </p>
+      </br>
+        <p>Trenger du en bruker? </br>
+          <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Registrer</a>
+      </div>
+      <div class="jumbotron" id="info">
+        <p>
+          Informasjon
+        </p>
+      </div>
+
     </div>
-
-</div>
 </body>
+
 </html>

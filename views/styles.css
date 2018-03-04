@@ -1,0 +1,37 @@
+.navbar-nav {
+    float: right;
+    padding-top: 10px;
+}
+.navbar-inverse {
+  background-color: inherit;
+  border: none;
+}
+.navbar-nav a {
+    color: blue !important;
+    border-radius: 20px !important;
+    width: 130%;
+    text-align: center;
+}
+.navbar-nav li {
+    padding-left: 50px !important;
+    margin-left: -3%;
+}
+.navbar-inverse .navbar-nav>.active>a {
+    background-color: lightblue !important;
+}
+.navbar-inverse .navbar-brand{
+  color: blue !important;
+}
+#logginn{
+  width: 50%;
+  float: left;
+}
+#info{
+  width: 50%;
+  margin-top: 5%;
+  float: right;
+  background-color: lightgrey;
+}
+#header {
+  overflow: hidden;
+}
