@@ -40,7 +40,7 @@ Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til n
 
 ```
 Skriv npm install i kommandovinduet
-Bruk "nodemon server.js" for å kjøre server.js
+Bruk "npm run dev" for å kjøre server.js og en kommando som synkroniserer MongoDB til MySQL
 ```
 
 For å vise klientsiden av programmet kan du enten gå til
