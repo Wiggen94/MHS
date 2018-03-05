@@ -1,0 +1,20 @@
+{
+  "src": "mongodb://@51.15.221.107/test",
+  "dist": "mysql://g_oops_2:4JqXIUT3@mysql.stud.iie.ntnu.no:3306/g_oops_2",
+  "prefix": "",
+  "collections": {
+    "users": {
+      "_id": "string",
+      "facebook.id": "string",
+      "facebook.token": "string",
+      "facebook.name": "string",
+      "facebook.email": "string",
+      "local.email": "string",
+      "local.password": "string",
+      "google.email": "string",
+      "google.id": "string",
+      "google.name": "string",
+      "google.token": "string"
+    }
+  }
+}

@@ -1,6 +1,10 @@
 {
   "name": "MHS",
-  "main": "server.js",
+  "scripts": {
+    "start1": "nodemon server.js",
+    "momy": "momy --config momyfile.json --import",
+    "dev": "start npm run start1 && start npm run momy"
+  },
   "dependencies": {
     "bcrypt-nodejs": "latest",
     "body-parser": "~1.15.2",
@@ -9,10 +13,14 @@
     "ejs": "~2.5.2",
     "express": "~4.14.0",
     "express-session": "~1.14.1",
+    "google-auth-library": "^0.12.0",
+    "googleapis": "^25.0.0",
+    "jquery": "^3.3.1",
     "method-override": "~2.3.6",
+    "momy": "",
     "mongoose": "^5.0.7",
-    "mysql": "",
     "morgan": "~1.7.0",
+    "mysql": "",
     "nativefier": "",
     "nodemon": "^1.15.1",
     "passport": "~0.3.2",

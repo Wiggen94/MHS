@@ -1,10 +1,13 @@
 module.exports = function(app, passport) {
 
 // normal routes ===============================================================
-
 	// show the home page (will also have our login links)
 	app.get('/', function(req, res) {
+		if (req.isAuthenticated()){
+		res.redirect('/profile');
+	} else {
 		res.render('index.ejs');
+	}
 	});
 
 	// PROFILE SECTION =========================
@@ -150,8 +153,8 @@ module.exports = function(app, passport) {
 		});
 	});
 
-
 };
+
 
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {

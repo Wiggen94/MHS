@@ -16,6 +16,7 @@ var session      = require('./node_modules/express-session/index.js');
 
 var configDB = require('./config/database.js');
 
+
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
@@ -32,7 +33,7 @@ app.use(bodyParser.json());
 app.set('view engine', './node_modules/ejs/lib/ejs.js'); // set up ejs for templating
 
 // required for passport
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch', saveUninitialized: true, resave: true })); // session secret
+app.use(session({ secret: 'ilovescotchscotchyscotchscotch', saveUninitialized: true, resave: false })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
