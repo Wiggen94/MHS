@@ -54,6 +54,6 @@ nativefier http://localhost:8080
 
 Du skal etter dette ha fått en ny mappe som heter noe lignende som "APP-win32-x64", denne mappen vil ha noe annet navn på OS X.
 I denne mappen er det en fil som heter App som vil kjøre prosjektet som et program istedenfor en nettside ved å bruke electronjs.
-## Oppsett
+## Oppsett i et live-system
 
 Kommer senere
