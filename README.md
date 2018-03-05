@@ -41,6 +41,7 @@ Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til n
 ```
 Skriv "npm install" i kommandovinduet
 Bruk "npm run dev" for å kjøre server.js
+Bruk "nodemon server.js" på OS X
 ```
 
 For å vise klientsiden av programmet kan du enten gå til
