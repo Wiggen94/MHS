@@ -1,3 +1,6 @@
+p {
+  word-wrap: break-word;
+}
 .navbar-nav {
     float: right;
     padding-top: 10px;
@@ -34,4 +37,11 @@
 }
 #header {
   overflow: hidden;
+}
+#calendar {
+  width: 50%;
+  float: right;
+}
+.fc-view-container {
+  height: 150% !important;
 }

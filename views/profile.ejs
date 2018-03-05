@@ -5,20 +5,39 @@
     <title>Mannskapshåndteringssystem</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <style>
-        body        { padding-top:80px; word-wrap:break-word; }
-    </style>
+    <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
+<link rel="stylesheet" href="styles.css">
+
 </head>
+
 <body>
 <div class="container">
-
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profil</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logg ut</a>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Røde Kors</a>
     </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/">Forside</a></li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
+    <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="/profile">Min profil</a></li>
+          <li><a href="/editprofile">Endre profil</a></li>
+        </ul>
+      </li>
+      <li><a href="/inbox">Meldinger</a></li>
+      <li><a href="/logout">Logg ut</a></li>
+    </ul>
+  </div>
+</nav>
+</div>
+<div class="container">
+
 
     <div class="row">
-
+<div id='calendar'></div>
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
@@ -87,7 +106,22 @@
             </div>
         </div>
     </div>
-
 </div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
+<script src='fullcalendar-3.8.2/lib/moment.min.js'></script>
+<script src='fullcalendar-3.8.2/fullcalendar.js'></script>
+<script src='fullcalendar-3.8.2/locale/nb.js'></script>
+<script>$(document).ready(function() {
+
+  // page is now ready, initialize the calendar...
+
+  $('#calendar').fullCalendar({
+    defaultView: 'month',
+  })
+
+});</script>
 </body>
 </html>

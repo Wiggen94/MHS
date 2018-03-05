@@ -10,30 +10,33 @@
 </head>
 
 <body>
-  <div class="container  jumbotron">
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">Røde Kors</a>
-        </div>
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="/">Forside</a></li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
-        <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Min profil</a></li>
-              <li><a href="#">Endre profil</a></li>
-            </ul>
-          </li>
-          <li><a href="/inbox">Meldinger</a></li>
-        </ul>
+  <div class="container">
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Røde Kors</a>
       </div>
-    </nav>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Forside</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
+      <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/profile">Min profil</a></li>
+            <li><a href="/editprofile">Endre profil</a></li>
+          </ul>
+        </li>
+        <li><a href="/inbox">Meldinger</a></li>
+        <li><a href="/logout">Logg ut</a></li>
+      </ul>
+    </div>
+  </nav>
+  </div>
+  <div class="container">
 
 
-    <div class="jumbotron text-center" id="header">
-      <div class="jumbotron text-left" id="logginn">
+    <div class="container text-center" id="header">
+      <div class="container text-left" id="logginn">
           <p>Logg inn eller registrer:</p>
         <!-- LOGIN FORM -->
         <form action="/login" method="post">
@@ -65,6 +68,10 @@
       </div>
 
     </div>
+  </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 
 </html>
