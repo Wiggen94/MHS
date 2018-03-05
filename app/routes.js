@@ -1,5 +1,5 @@
 module.exports = function(app, passport) {
-
+var nodeMailer = require('nodemailer');
 // normal routes ===============================================================
 	// show the home page (will also have our login links)
 	app.get('/', function(req, res) {
@@ -22,6 +22,39 @@ module.exports = function(app, passport) {
 		req.logout();
 		res.redirect('/');
 	});
+
+	// CONTACT SECTION =======================
+	app.get('/contact', function(req, res) {
+		res.render('contact.ejs', {
+			user : req.user
+		});
+	});
+	app.post('/send-email', function (req, res) {
+      let transporter = nodeMailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+              user: 'mhsmail7@gmail.com',
+              pass: 'mhsmail1'
+          }
+      });
+      let mailOptions = {
+          from: req.body.from, // sender address
+          to: 'mhsmail7@gmail.com', // list of receivers
+          subject: req.body.subject, // Subject line
+          html: req.body.body + '<br>' + '</br>' + 'Du har mottatt denne meldingen fra ' + req.body.from // plain text body
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+          console.log('Message %s sent: %s', info.messageId, info.response);
+              			res.redirect('/profile');
+          });
+				});
+
 
 // =============================================================================
 // AUTHENTICATE (FIRST LOGIN) ==================================================

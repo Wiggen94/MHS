@@ -1,0 +1,89 @@
+<!-- views/contacts.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Mannskapshåndteringssystem</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+
+<body>
+  <div class="container">
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Røde Kors</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Forside</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
+      <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/profile">Min profil</a></li>
+            <li><a href="/editprofile">Endre profil</a></li>
+          </ul>
+        </li>
+        <li><a href="/contact">Kontakt</a></li>
+        <li><a href="/logout">Logg ut</a></li>
+      </ul>
+    </div>
+  </nav>
+    <div class="container">
+      <h1 class="text-center" style="font-size:24px">Kontakt administrator</h1>
+      <form action="/send-email" method="post">
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="form-group col-md-4">
+            <label for="from">Din epost:</label>
+            <input type="email" class="form-control" name="from">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="form-group col-md-4">
+            <label for="subject">Emne:</label>
+            <input type="text" class="form-control" name="subject">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4"></div>
+            <div class="form-group col-md-4">
+              <label for="body">Innhold:</label>
+              <textarea cols="5" rows="5"class="form-control" name="body"></textarea>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="form-group col-md-4">
+            <button type="submit" class="btn btn-success">Send</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
+<script src='fullcalendar-3.8.2/lib/moment.min.js'></script>
+<script src='fullcalendar-3.8.2/fullcalendar.js'></script>
+<script src='fullcalendar-3.8.2/locale/nb.js'></script>
+<script>$(document).ready(function() {
+
+  // page is now ready, initialize the calendar...
+
+  $('#calendar').fullCalendar({
+    defaultView: 'month',
+  })
+
+});</script>
+</body>
+</html>
