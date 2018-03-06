@@ -23,7 +23,7 @@
     "mysql": "",
     "nativefier": "",
     "nodemailer": "^4.6.0",
-    "nodemon": "^1.15.1",
+    "nodemon": "",
     "passport": "~0.3.2",
     "passport-facebook": "~2.1.1",
     "passport-google-oauth": "~1.0.0",
