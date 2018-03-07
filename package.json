@@ -3,9 +3,8 @@
   "scripts": {
     "start1": "nodemon server.js",
     "momy": "momy --config momyfile.json --import",
-    "dev": "start npm run start1 && start npm run momy"
+    "dev": "start npm run start1 && start npm run momy",
     "preinstall": "npm i -g nodemon"
-}
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
