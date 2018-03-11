@@ -1,127 +1,171 @@
 <!-- views/profile.ejs -->
 <!doctype html>
 <html>
+
 <head>
-    <title>Mannskapshåndteringssystem</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
-    <link rel="stylesheet" href="styles.css">
+  <title>Mannskapshåndteringssystem</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
+  <link rel="stylesheet" href="styles.css">
 
 </head>
 
 <body>
-<div class="container">
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">Røde Kors</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="/">Forside</a></li>
-      <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
+  <div class="container">
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Røde Kors</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Forside</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">Profil
     <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="/profile">Min profil</a></li>
-          <li><a href="/editprofile">Endre profil</a></li>
+            <ul class="dropdown-menu">
+              <li><a href="/profile">Min profil</a></li>
+              <li><a href="/editprofile">Endre profil</a></li>
+            </ul>
+          </li>
+          <li><a href="/contact">Kontakt</a></li>
+          <li><a href="/logout">Logg ut</a></li>
         </ul>
-      </li>
-      <li><a href="/contact">Kontakt</a></li>
-      <li><a href="/logout">Logg ut</a></li>
-    </ul>
+      </div>
+    </nav>
   </div>
-</nav>
-</div>
-<div class="container">
+  <div class="container">
 
 
     <div class="row">
-<div id='calendar'></div>
+      <div id='calendar'>
+        <button><a href="/users">Vis brukere</button></a>
+
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-6">
-            <div class="well">
-                <h3><span class="fa fa-user"></span> Lokal</h3>
+          <div>
 
-                <% if (user.local.email) { %>
-                    <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.local.email %><br>
-                        <strong>password</strong>: <%= user.local.password %>
-                    </p>
+            Alle brukere i systemet: </br>
+            <ul>
+              <% for(var i=0; i<data.length; i++) {%>
+                <li>
+                  <%= data[i]['localName'] %>
+                </li>
+                <% } %>
+            </ul>
+            </ul>
 
-                    <a href="/unlink/local" class="btn btn-default">Frakoble</a>
-                <% } else { %>
-                    <a href="/connect/local" class="btn btn-default">Koble til lokal</a>
+          </div>
+          <div class="well">
+            <h3><span class="fa fa-user"></span> Lokal</h3>
+
+            <% if (user.local.email) { %>
+              <p>
+                <strong>id</strong>:
+                <%= user._id %><br>
+                  <strong>email</strong>:
+                  <%= user.local.email %><br>
+                    <strong>password</strong>:
+                    <%= user.local.password %>
+              </p>
+
+              <a href="/unlink/local" class="btn btn-default">Frakoble</a>
+              <% } else { %>
+                <a href="/connect/local" class="btn btn-default">Koble til lokal</a>
                 <% } %>
 
-            </div>
+          </div>
         </div>
 
         <!-- FACEBOOK INFORMATION -->
         <div class="col-sm-6">
-            <div class="well">
-                <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
+          <div class="well">
+            <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
 
-                <!-- check if the user has this token (is the user authenticated with this social account) -->
-                <% if (user.facebook.token) { %>
-                    <p>
-                        <strong>id</strong>: <%= user.facebook.id %><br>
-                        <strong>token</strong>: <%= user.facebook.token %><br>
-                        <strong>email</strong>: <%= user.facebook.email %><br>
-                        <strong>name</strong>: <%= user.facebook.name %><br>
-                    </p>
+            <!-- check if the user has this token (is the user authenticated with this social account) -->
+            <% if (user.facebook.token) { %>
+              <p>
+                <strong>id</strong>:
+                <%= user.facebook.id %><br>
+                  <strong>token</strong>:
+                  <%= user.facebook.token %><br>
+                    <strong>email</strong>:
+                    <%= user.facebook.email %><br>
+                      <strong>name</strong>:
+                      <%= user.facebook.name %><br>
+              </p>
 
-                    <a href="/unlink/facebook" class="btn btn-primary">Frakoble</a>
-                <% } else { %>
-                    <a href="/connect/facebook" class="btn btn-primary">Koble til Facebook</a>
+              <a href="/unlink/facebook" class="btn btn-primary">Frakoble</a>
+              <% } else { %>
+                <a href="/connect/facebook" class="btn btn-primary">Koble til Facebook</a>
                 <% } %>
 
-            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="row">
+      <div class="row">
 
 
         <!-- GOOGLE INFORMATION -->
         <div class="col-sm-6">
-            <div class="well">
-                <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>
+          <div class="well">
+            <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>
 
-                <!-- check if the user has this token (is the user authenticated with this social account) -->
-                <% if (user.google.token) { %>
-                    <p>
-                        <strong>id</strong>: <%= user.google.id %><br>
-                        <strong>token</strong>: <%= user.google.token %><br>
-                        <strong>email</strong>: <%= user.google.email %><br>
-                        <strong>name</strong>: <%= user.google.name %>
-                    </p>
+            <!-- check if the user has this token (is the user authenticated with this social account) -->
+            <% if (user.google.token) { %>
+              <p>
+                <strong>id</strong>:
+                <%= user.google.id %><br>
+                  <strong>token</strong>:
+                  <%= user.google.token %><br>
+                    <strong>email</strong>:
+                    <%= user.google.email %><br>
+                      <strong>name</strong>:
+                      <%= user.google.name %>
+              </p>
 
-                    <a href="/unlink/google" class="btn btn-danger">Frakoble</a>
-                <% } else { %>
-                    <a href="/connect/google" class="btn btn-danger">Koble til Google</a>
+              <a href="/unlink/google" class="btn btn-danger">Frakoble</a>
+              <% } else { %>
+                <a href="/connect/google" class="btn btn-danger">Koble til Google</a>
                 <% } %>
 
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
-<script src='fullcalendar-3.8.2/lib/moment.min.js'></script>
-<script src='fullcalendar-3.8.2/fullcalendar.js'></script>
-<script src='fullcalendar-3.8.2/locale/nb.js'></script>
-<script>$(document).ready(function() {
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
+    <script src='fullcalendar-3.8.2/lib/moment.min.js'></script>
+    <script src='fullcalendar-3.8.2/fullcalendar.js'></script>
+    <script src='fullcalendar-3.8.2/locale/nb.js'></script>
+    <script>
+      $(document).ready(function() {
 
-  // page is now ready, initialize the calendar...
+        // page is now ready, initialize the calendar...
 
-  $('#calendar').fullCalendar({
-    defaultView: 'month',
-  })
+        $('#calendar').fullCalendar({
+          defaultView: 'month',
+          navLinks: true, // can click day/week names to navigate views
+          editable: true,
+          eventLimit: true, // allow "more" link when too many events
+          events: [
+     {
+       title: 'Woohooo',
+       url: '/profile',
+       start: '2018-03-12',
+     }
+   ],
+          dayClick: function(date) {
+  alert('du klikket på ' + date.format());
+}
 
-});</script>
+        })
+
+      });
+    </script>
 </body>
+
 </html>

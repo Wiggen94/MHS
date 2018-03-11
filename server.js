@@ -8,7 +8,7 @@ var port     = process.env.PORT || 8080;
 var mongoose = require('./node_modules/mongoose/lib/index.js');
 var passport = require('./node_modules/passport/lib/index.js');
 var flash    = require('./node_modules/connect-flash/lib/index.js');
-
+var mysql    = require('mysql');
 var morgan       = require('./node_modules/morgan/index.js');
 var cookieParser = require('./node_modules/cookie-parser/index.js');
 var bodyParser   = require('./node_modules/body-parser/index.js');
@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.set('view engine', './node_modules/ejs/lib/ejs.js'); // set up ejs for templating
+app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
 app.use(session({ secret: 'ilovescotchscotchyscotchscotch', saveUninitialized: true, resave: false })); // session secret
