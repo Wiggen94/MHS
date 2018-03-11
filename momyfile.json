@@ -10,7 +10,7 @@
       "facebook.email": "string",
       "local.name"  : "string",
       "local.phone" : "string",
-      "local.bday"  : "date",
+      "local.bday"  : "DATE",
       "local.email": "string",
       "local.password": "string",
 
