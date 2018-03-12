@@ -22,8 +22,12 @@ p {
 .navbar-inverse .navbar-nav>.active>a {
     background-color: lightblue !important;
 }
-.navbar-inverse .navbar-brand{
+.navbar-inverse{
   color: blue !important;
+}
+.navbar-brand{
+  color: red !important;
+  font-size: 30px;
 }
 #logginn{
   width: 50%;
@@ -38,10 +42,14 @@ p {
 #header {
   overflow: hidden;
 }
-#calendar {
+#leftContainer {
+  width: 50%;
+  float: left;
+}
+#rightContainer {
   width: 50%;
   float: right;
 }
-.fc-view-container {
-  height: 150% !important;
+.well {
+  padding-top: 0px !important;
 }
