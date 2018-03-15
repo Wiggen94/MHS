@@ -17,7 +17,7 @@ module.exports =  {
 
 // Class that performs database queries related to customers
   getUsers(callback){
-    connection.query('SELECT * FROM users', (error, result, fields) => {
+    connection.query('SELECT * FROM users', (error, result) => {
       if (error) throw error;
       callback(result);
     });
@@ -31,12 +31,7 @@ module.exports =  {
     });
   },
 
-  removeCustomer(id) {
-    connection.query('DELETE FROM Customers WHERE _id=?', [id], (error, result) => {
-      if (error) throw error;
-      console.log('Deleted someone...');
-    });
-  },
+
 
   changeCustomer(name, city, id) {
     connection.query("UPDATE Customers SET firstName = ?, city = ? WHERE id = ?", [name, city, id], (error, result) => {

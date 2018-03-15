@@ -1,4 +1,4 @@
-<!-- views/contacts.ejs -->
+<!-- views/search.ejs -->
 <!doctype html>
 <html>
 <head>
@@ -21,45 +21,34 @@
         <ul class="nav navbar-nav">
           <li><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
-          <li><a href="/search">Søk</a></li>
-          <li class="active"><a href="/contact">Kontakt</a></li>
+          <li  class="active"><a href="/search">Søk</a></li>
+          <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
         </ul>
       </div>
     </nav>
-      <h1 class="text-center" style="font-size:24px">Kontakt administrator</h1>
-      <form action="/send-email" method="post">
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="form-group col-md-4">
-            <label for="from">Din epost:</label>
-            <input type="email" class="form-control" name="from">
+    <div class="jumbotron d-flex align-items-center">
+      <div class="text-center">
+        <form action="/search-user" method="post">
+          <div class="form-group">
+              <label>Søk</label>
+              <input type="text" class="form-control" name="searchInput">
           </div>
-        </div>
+            <button type="submit" class="btn btn-warning btn-lg">Søk</button>
+        </form>
 
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="form-group col-md-4">
-            <label for="subject">Emne:</label>
-            <input type="text" class="form-control" name="subject">
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-md-4"></div>
-            <div class="form-group col-md-4">
-              <label for="body">Innhold:</label>
-              <textarea cols="5" rows="5"class="form-control" name="body"></textarea>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="form-group col-md-4">
-            <button type="submit" class="btn btn-success">Send</button>
-          </div>
-        </div>
-      </form>
     </div>
+    <ul>
+      Søkeresultater
+      <% for(var i=0; i<data.length; i++) {%>
+        <li>
+          <%= data[i]['localName'] %>
+        </li>
+        <% } %>
+    </ul>
+    </div>
+  </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

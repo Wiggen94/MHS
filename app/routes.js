@@ -5,6 +5,8 @@ var connection = mysql.createConnection({
   password: '4JqXIUT3',
   database: 'g_oops_2'
 });
+
+
 var userService = require('./services.js');
 module.exports = function(app, passport) {
   var nodeMailer = require('nodemailer');
@@ -19,18 +21,14 @@ module.exports = function(app, passport) {
   });
 
   // PROFILE SECTION =========================
-
-  app.get('/profile', isLoggedIn, function(req, res) {
-    var userlist = [];
+  app.get("/profile",isLoggedIn, function(req, res) {
     userService.getUsers((result) => {
         res.render('profile.ejs', {
           data: result,
-
           user: req.user
         });
 
-    });
-
+  });
 
   });
   // LOGOUT ==============================
@@ -44,6 +42,58 @@ module.exports = function(app, passport) {
       user: req.user
     });
   });
+
+  // SEARCH SECTION ========================
+  app.get('/search', function(req, res) {
+    var test = "";
+    res.render('search.ejs', {
+      user: req.user,
+      data: test
+    });
+
+  });
+
+  app.post('/search-user', function(req, res) {
+connection.query('SELECT * from users where localName like ? order by localName', ["%" + req.body.searchInput+ "%"], function(error, result) {
+  if (error) throw error;
+  console.log(result);
+
+
+    res.render('search.ejs', {
+      user: req.user,
+      data: result
+  });
+    });
+
+  });
+
+  // EVENT SECTION ========================
+  app.get('/events', function(req, res) {
+    var test = "";
+    res.render('events.ejs', {
+      user: req.user,
+    });
+
+  });
+
+  app.post('/add-event', function(req, res) {
+connection.query('INSERT INTO arrangementer (navn, fraDato, tilDato, sted) values (?, ?, ?, ?)', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.eventLocation], function(error, result) {
+  if (error) throw error;
+  console.log(result);
+
+
+    res.render('events.ejs', {
+      user: req.user,
+  });
+    });
+
+  });
+
+
+
+
+
+  // SEND-EMAIL ==============================
   app.post('/send-email', function(req, res) {
     let transporter = nodeMailer.createTransport({
       host: 'smtp.gmail.com',

@@ -19,8 +19,9 @@
           <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
-          <li><a href="/">Forside</a></li>
           <li class="active"><a href="/profile">Profil</a></li>
+          <li><a href="/events">Arrangementer</a></li>
+          <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
         </ul>
@@ -42,13 +43,13 @@
 
       <h3>Alle brukere i systemet:</h3> </br>
       <ul>
-        <% for(var i=0; i<data.length; i++) {%>
+        <% for(var i=0; i<data.length; i++) { %>
           <li>
             <%= data[i]['localName'] %>
           </li>
           <% } %>
       </ul>
-      </ul>
+
 
       </div>
       </div>
@@ -62,7 +63,7 @@
               <p>
                 <strong>Navn</strong>:
                 <%= user.local.name %><br>
-                  <strong>email</strong>:
+                  <strong>E-post</strong>:
                   <%= user.local.email %><br>
                     <strong>Fødselsdato</strong>:
                     <%= user.local.bday %>
