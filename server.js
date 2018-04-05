@@ -4,6 +4,7 @@
 // get all the tools we need
 var express  = require('./node_modules/express/index.js');
 var app      = express();
+var helpers = require('express-helpers')(app);
 var port     = process.env.PORT || 8080;
 var mongoose = require('./node_modules/mongoose/lib/index.js');
 var passport = require('./node_modules/passport/lib/index.js');

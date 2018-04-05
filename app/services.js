@@ -11,10 +11,6 @@ var connection = mysql.createConnection({
 module.exports =  {
 
 
-// Setup database server reconnection when server timeouts connection:
-
-
-
 // Class that performs database queries related to customers
   getUsers(callback){
     connection.query('SELECT * FROM users', (error, result) => {
@@ -23,21 +19,10 @@ module.exports =  {
     });
   },
 
-  getUser(id, callback) {
-    connection.query('SELECT * FROM users WHERE id=?', [id], (error, result) => {
+  getEvents(callback) {
+    connection.query('SELECT * FROM Arrangement', (error, results) => {
       if (error) throw error;
-
-      callback(result[0]);
+      callback(results);
     });
   },
-
-
-
-  changeCustomer(name, city, id) {
-    connection.query("UPDATE Customers SET firstName = ?, city = ? WHERE id = ?", [name, city, id], (error, result) => {
-      if (error) throw error;
-
-      console.log('Changed someone...');
-    });
-  }
 };

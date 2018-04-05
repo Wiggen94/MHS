@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
 var userService = require('./services.js');
 module.exports = function(app, passport) {
   var nodeMailer = require('nodemailer');
-  // normal routes ===============================================================
+  // normal routes =============================================================
   // show the home page (will also have our login links)
   app.get('/', function(req, res) {
     if (req.isAuthenticated()) {
@@ -21,16 +21,21 @@ module.exports = function(app, passport) {
   });
 
   // PROFILE SECTION =========================
-  app.get("/profile",isLoggedIn, function(req, res) {
+  app.get("/profile", isLoggedIn, function(req, res) {
     userService.getUsers((result) => {
+      userService.getEvents((results) => {
         res.render('profile.ejs', {
-          data: result,
+          users: result,
+          events: results,
           user: req.user
         });
 
+      });
+
+    });
   });
 
-  });
+
   // LOGOUT ==============================
   app.get('/logout', function(req, res) {
     req.logout();
@@ -54,15 +59,15 @@ module.exports = function(app, passport) {
   });
 
   app.post('/search-user', function(req, res) {
-connection.query('SELECT * from users where localName like ? order by localName', ["%" + req.body.searchInput+ "%"], function(error, result) {
-  if (error) throw error;
-  console.log(result);
+    connection.query('SELECT * from users where localName like ? order by localName', ["%" + req.body.searchInput + "%"], function(error, result) {
+      if (error) throw error;
+      console.log(result);
 
 
-    res.render('search.ejs', {
-      user: req.user,
-      data: result
-  });
+      res.render('search.ejs', {
+        user: req.user,
+        data: result
+      });
     });
 
   });
@@ -75,19 +80,36 @@ connection.query('SELECT * from users where localName like ? order by localName'
     });
 
   });
+  var i=0;
+  app.get("/event/:arr_id", function(req, res) {
+    userService.getEvents((results) => {
+      res.render('event.ejs', {
+        id: req.params.arr_id,
+        events: results
+      });
+
+    });
+  i = 0;
+  });
+
+  // OPRETTE ARRANGEMENTER ==========================
 
   app.post('/add-event', function(req, res) {
-connection.query('INSERT INTO arrangementer (navn, fraDato, tilDato, sted) values (?, ?, ?, ?)', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.eventLocation], function(error, result) {
-  if (error) throw error;
-  console.log(result);
-
-
+    connection.query('INSERT INTO Arrangement (navn, fraDato, tilDato, startTid, sluttTid) values (?, ?, ?, ?, ?);', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.fromTime, req.body.toTime], function(error, result) {
+      if (error) throw error;
+      console.log(result);
+    });
+    connection.query('INSERT INTO Sted (postSted, adresse) values (?, ?);', [req.body.poststed, req.body.adresse], function(error, result) {
+      if (error) throw error;
+      console.log(result);
+    });
     res.render('events.ejs', {
       user: req.user,
-  });
     });
 
   });
+
+
 
 
 
@@ -120,10 +142,12 @@ connection.query('INSERT INTO arrangementer (navn, fraDato, tilDato, sted) value
     });
   });
 
-
-  // =============================================================================
-  // AUTHENTICATE (FIRST LOGIN) ==================================================
-  // =============================================================================
+  /* ===========================================================================
+  IKKE ENDRE NOE UNDER HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!============
+  */
+  // ===========================================================================
+  // AUTHENTICATE (FIRST LOGIN) ================================================
+  // ===========================================================================
 
   // locally --------------------------------
   // LOGIN ===============================
@@ -185,9 +209,9 @@ connection.query('INSERT INTO arrangementer (navn, fraDato, tilDato, sted) value
       failureRedirect: '/'
     }));
 
-  // =============================================================================
-  // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
-  // =============================================================================
+  // ===========================================================================
+  // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) ===========
+  // ===========================================================================
 
   // locally --------------------------------
   app.get('/connect/local', function(req, res) {
@@ -230,9 +254,9 @@ connection.query('INSERT INTO arrangementer (navn, fraDato, tilDato, sted) value
       failureRedirect: '/'
     }));
 
-  // =============================================================================
-  // UNLINK ACCOUNTS =============================================================
-  // =============================================================================
+  // ===========================================================================
+  // UNLINK ACCOUNTS ===========================================================
+  // ===========================================================================
   // used to unlink accounts. for social accounts, just remove the token
   // for local account, remove email and password
   // user account will stay active in case they want to reconnect in the future

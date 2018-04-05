@@ -1,4 +1,4 @@
-<!-- views/search.ejs -->
+<!-- views/event.ejs -->
 <!doctype html>
 <html>
 <head>
@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 
 </head>
 
@@ -21,42 +21,29 @@
         <ul class="nav navbar-nav">
           <li><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
-          <li  class="active"><a href="/search">Søk</a></li>
+          <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
         </ul>
       </div>
     </nav>
     <div class="jumbotron d-flex align-items-center">
-      <div class="text-center">
-        <form action="/search-user" method="post">
-          <div class="form-group">
-              <label>Søk</label>
-              <input type="text" class="form-control" name="searchInput">
-          </div>
-            <button type="submit" class="btn btn-warning btn-lg">Søk</button>
-        </form>
-
-
-    </div>
-    <ul>
-      Søkeresultater
-      <% for(var i=0; i<data.length; i++) {%>
-<div class="well">
-        <li>
-          <h3><%= data[i].localName %></h3>
-          <p>
-
-
-          Tlf: <%= data[i].localPhone %> </br>
-
-          Epost:<a href=mailto:<%= data[i].localEmail %> </a> <%= data[i].localEmail %></br>
-          </p>
-        </li>
-        <% } %>
-    </ul>
+      <h2><%- events[id].navn %></h2>
+      <li>
+        Fra dato: <%- events[id].fraDato.toDateString() %>
+      </li>
+      <li>
+        Til dato: <%- events[id].tilDato.toDateString() %>
+      </li>
+      <li>
+        Fra kl: <%- events[id].startTid.replace(':00','') %>
+      </li>
+      <li>
+        Til kl: <%- events[id].sluttTid.replace(':00','') %>
+      </li>
     </div>
   </div>
+
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

@@ -16,7 +16,7 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
+          <a href="/" class="navbar-brand" style: "font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
           <li class="active"><a href="/profile">Profil</a></li>
@@ -30,79 +30,86 @@
 
     <div class="row">
 
-  <div class="container-fluid col-sm-4" id="rightContainer">
+      <div class="container-fluid col-sm-4" id="rightContainer">
 
-        <div id='calendar'>   </br>
-
-
-
+        <div id='calendar'>
+          </br>
 
 
+          <h3>Alle opprettede arrangementer:</h3> </br>
+          <ul>
+            <% for(var i=0; i<events.length; i++) { %>
+              <li>
+                <%- link_to(events[i].navn, 'event/'+i) %>
+              </li>
+              <% } %>
+          </ul>
 
 
 
-      <h3>Alle brukere i systemet:</h3> </br>
-      <ul>
-        <% for(var i=0; i<data.length; i++) { %>
-          <li>
-            <%= data[i]['localName'] %>
-          </li>
-          <% } %>
-      </ul>
+
+
+          <h3>Alle brukere i systemet:</h3> </br>
+          <ul>
+            <% for(var j=0; j<users.length; j++) { %>
+              <li>
+                <%= users[j]['localName'] %>
+              </li>
+              <% } %>
+          </ul>
+
+
+        </div>
+      </div>
+      <!-- LOCAL INFORMATION -->
+      <div class="well container-fluid col-sm-4" id="leftContainer">
+
+
+        <h3><span class="fa fa-user"></span> Min profil</h3>
+
+        <% if (user.local.email) { %>
+          <p>
+            <strong>Navn</strong>:
+            <%= user.local.name %><br>
+              <strong>E-post</strong>:
+              <%= user.local.email %><br>
+                <strong>Fødselsdato</strong>:
+                <%= user.local.bday %>
+          </p>
+          <% } else { %>
+            <a href="/connect/local" class="btn btn-default">Koble til lokal</a>
+            </br>
+            <% } %>
+              <% if (user.google.token) { %>
+                <p>
+                  Du har koblet din bruker til Google
+                </p>
+
+                <a href="/unlink/google" class="btn btn-danger fa fa-google-plus"> Frakoble</a>
+                </br>
+                </br>
+                <% } else { %>
+                  <a href="/connect/google" class="btn btn-danger fa fa-google-plus">Koble til Google</a>
+                  </br>
+                  <% } %>
+                    <% if (user.facebook.token) { %>
+                      <p>
+                        Du har koblet din bruker til Facebook.
+                      </p>
+
+                      <a href="/unlink/facebook" class="btn btn-primary fa fa-facebook"> Frakoble</a>
+                      <% } else { %>
+                        <a href="/connect/facebook" class="btn btn-primary fa fa-facebook">Koble til Facebook</a>
+                        <% } %>
 
 
       </div>
-      </div>
-        <!-- LOCAL INFORMATION -->
-  <div class="well container-fluid col-sm-4" id="leftContainer">
-
-
-            <h3><span class="fa fa-user"></span> Min profil</h3>
-
-            <% if (user.local.email) { %>
-              <p>
-                <strong>Navn</strong>:
-                <%= user.local.name %><br>
-                  <strong>E-post</strong>:
-                  <%= user.local.email %><br>
-                    <strong>Fødselsdato</strong>:
-                    <%= user.local.bday %>
-              </p>
-              <% } else { %>
-                <a href="/connect/local" class="btn btn-default">Koble til lokal</a>
-              </br>
-                <% } %>
-                  <% if (user.google.token) { %>
-                    <p>
-                      Du har koblet din bruker til Google
-                    </p>
-
-                    <a href="/unlink/google" class="btn btn-danger fa fa-google-plus"> Frakoble</a>
-                    </br>
-                    </br>
-                    <% } else { %>
-                      <a href="/connect/google" class="btn btn-danger fa fa-google-plus">Koble til Google</a>
-                      </br>
-                      <% } %>
-                        <% if (user.facebook.token) { %>
-                          <p>
-                            Du har koblet din bruker til Facebook.
-                          </p>
-
-                          <a href="/unlink/facebook" class="btn btn-primary fa fa-facebook"> Frakoble</a>
-                          <% } else { %>
-                            <a href="/connect/facebook" class="btn btn-primary fa fa-facebook">Koble til Facebook</a>
-                            <% } %>
-
-
-
     </div>
-          </div>
   </div>
 
 
 
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
@@ -110,10 +117,8 @@
   <script src='fullcalendar-3.8.2/fullcalendar.js'></script>
   <script src='fullcalendar-3.8.2/locale/nb.js'></script>
   <script>
+    // page is now ready, initialize the calendar...
     $(document).ready(function() {
-
-      // page is now ready, initialize the calendar...
-
       $('#calendar').fullCalendar({
         defaultView: 'month',
         navLinks: true, // can click day/week names to navigate views
@@ -122,8 +127,9 @@
         events: [{
           title: 'Woohooo',
           url: '/profile',
-          start: '2018-03-12',
+          start: '2018-04-12',
         }],
+
         dayClick: function(date) {
           alert('du klikket på ' + date.format());
         }
