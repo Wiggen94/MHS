@@ -1,4 +1,4 @@
-<!-- views/profile.ejs -->
+<!-- views/editprofile.ejs -->
 <!doctype html>
 <html>
 
@@ -6,8 +6,7 @@
   <title>Mannskapshåndteringssystem</title>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../styles.css">
 
 </head>
 
@@ -28,46 +27,13 @@
       </div>
     </nav>
 
-    <div class="row">
 
-      <div class="container-fluid col-sm-4" id="rightContainer">
-
-        <div id='calendar'>
-          </br>
-
-
-          <h3>Alle opprettede arrangementer:</h3> </br>
-          <ul>
-            <% for(let i=0; i<events.length; i++) { %>
-              <li>
-                <%- link_to(events[i].navn, 'event/'+i) %>
-              </li>
-              <% } %>
-          </ul>
-
-
-
-
-
-          <h3>Alle brukere i systemet:</h3> </br>
-          <ul>
-            <% for(let i=0; i<users.length; i++) { %>
-              <li>
-                <%= users[i]['localName'] %>
-              </li>
-              <% } %>
-          </ul>
-
-
-        </div>
-      </div>
       <!-- LOCAL INFORMATION -->
-      <div class="well container-fluid col-sm-4" id="leftContainer">
+    <div class="jumbotron d-flex align-items-center">
 
 
         <h3><span class="fa fa-user"></span> Min profil</h3>
 
-        <% if (user.local.email) { %>
           <p>
             <strong>Navn</strong>:
             <%= user.local.name %><br>
@@ -75,16 +41,25 @@
               <%= user.local.email %><br>
                 <strong>Fødselsdato</strong>:
                 <%= user.local.bday %><br>
-                <strong>Poeng</strong>:
-                <% for(let i=0; i<points.length; i++) { %>
-                    <%= points[i].poeng %>
-                  <% } %>
           </p>
-          <a href="/profile/editprofile" class="btn btn-danger">Endre profil</a> <br /> <br />
-          <% } else { %>
-            <a href="/connect/local" class="btn btn-default">Koble til lokal</a>
+            <form action="/edit-profile" method="post">
+              <div class="form-group">
+                  <label>Endre navn</label>
+                  <input type="text" class="form-control" name="changeName" required />
+              </div>
+          <div class="form-group">
+          <label>Endre Telefonnummer</label>
+          <input type="number" class="form-control" name="changePhone" required />
+        </div>
+                <div class="form-group">
+                    <label>Endre E-post</label>
+                    <input type="text" class="form-control" name="changeEmail" required />
+                </div>
+
+                <button type="submit" class="btn btn-warning btn-lg">Endre informasjon</button>
+            </form>
+
             </br>
-            <% } %>
               <% if (user.google.token) { %>
                 <p>
                   Du har koblet din bruker til Google
@@ -94,7 +69,7 @@
                 </br>
                 </br>
                 <% } else { %>
-                  <a href="/connect/google" class="btn btn-danger fa fa-google-plus">Koble til Google</a> <br />
+                  <a href="/connect/google" class="btn btn-danger fa fa-google-plus">Koble til Google</a>
                   </br>
                   <% } %>
                     <% if (user.facebook.token) { %>
@@ -110,39 +85,12 @@
 
       </div>
     </div>
-  </div>
 
 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  <script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
-  <script src='fullcalendar-3.8.2/lib/moment.min.js'></script>
-  <script src='fullcalendar-3.8.2/fullcalendar.js'></script>
-  <script src='fullcalendar-3.8.2/locale/nb.js'></script>
-  <script>
-    // page is now ready, initialize the calendar...
-    $(document).ready(function() {
-      $('#calendar').fullCalendar({
-        defaultView: 'month',
-        navLinks: true, // can click day/week names to navigate views
-        editable: true,
-        eventLimit: true, // allow "more" link when too many events
-        events: [{
-          title: 'Woohooo',
-          url: '/profile',
-          start: '2018-04-12',
-        }],
-
-        dayClick: function(date) {
-          alert('du klikket på ' + date.format());
-        }
-
-      })
-
-    });
-  </script>
 </body>
 
 </html>

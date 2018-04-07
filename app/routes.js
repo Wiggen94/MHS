@@ -6,9 +6,10 @@ var connection = mysql.createConnection({
   database: 'g_oops_2'
 });
 
-
+var Usermodel      = require('../app/models/user');
 var userService = require('./services.js');
 module.exports = function(app, passport) {
+
   var nodeMailer = require('nodemailer');
   // normal routes =============================================================
   // show the home page (will also have our login links)
@@ -21,21 +22,42 @@ module.exports = function(app, passport) {
   });
 
   // PROFILE SECTION =========================
-  app.get("/profile", isLoggedIn, function(req, res) {
+  app.get('/profile', isLoggedIn, function(req, res) {
     userService.getUsers((result) => {
+    userService.getPoints(req.user.id, (points) => {
+      console.log (points);
       userService.getEvents((results) => {
         res.render('profile.ejs', {
           users: result,
           events: results,
-          user: req.user
+          user: req.user,
+          points: points
         });
-
       });
-
+      });
     });
   });
 
+  // CHANGE PROFILE SECTION =========================
+  app.get('/profile/editprofile', function(req, res) {
+        res.render('editprofile.ejs', {
+          user: req.user
+        });
+  });
 
+  app.post('/edit-profile', function(req, res) {
+Usermodel.findByIdAndUpdate(req.user.id,{
+  local:{
+    name: req.body.changeName,
+    phone: req.body.changePhone,
+    email: req.body.changeEmail
+  }
+},    function(err, response){
+        console.log(response);
+        res.redirect('/profile');
+    console.log(res);
+  });
+    });
   // LOGOUT ==============================
   app.get('/logout', function(req, res) {
     req.logout();
@@ -59,6 +81,8 @@ module.exports = function(app, passport) {
   });
 
   app.post('/search-user', function(req, res) {
+    if (req.body.searchInput == "")  {
+    } else {
     connection.query('SELECT * from users where localName like ? order by localName', ["%" + req.body.searchInput + "%"], function(error, result) {
       if (error) throw error;
       console.log(result);
@@ -69,7 +93,7 @@ module.exports = function(app, passport) {
         data: result
       });
     });
-
+}
   });
 
   // EVENT SECTION ========================
@@ -89,7 +113,6 @@ module.exports = function(app, passport) {
       });
 
     });
-  i = 0;
   });
 
   // OPRETTE ARRANGEMENTER ==========================
@@ -97,22 +120,15 @@ module.exports = function(app, passport) {
   app.post('/add-event', function(req, res) {
     connection.query('INSERT INTO Arrangement (navn, fraDato, tilDato, startTid, sluttTid) values (?, ?, ?, ?, ?);', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.fromTime, req.body.toTime], function(error, result) {
       if (error) throw error;
-      console.log(result);
     });
     connection.query('INSERT INTO Sted (postSted, adresse) values (?, ?);', [req.body.poststed, req.body.adresse], function(error, result) {
       if (error) throw error;
-      console.log(result);
     });
     res.render('events.ejs', {
       user: req.user,
     });
 
   });
-
-
-
-
-
 
 
   // SEND-EMAIL ==============================
@@ -175,11 +191,19 @@ module.exports = function(app, passport) {
 
   // process the signup form
   app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/profile', // redirect to the secure profile section
+    successRedirect: '/firstlogin', // redirect to the secure profile section
     failureRedirect: '/signup', // redirect back to the signup page if there is an error
     failureFlash: true // allow flash messages
   }));
 
+
+  // first login
+  app.get('/firstlogin', function(req,res){
+  userService.firstLogin(req.user.id);
+  res.render('login.ejs', {
+    message: "Bruker opprettet, du kan nå logge inn"
+  });
+});
   // facebook -------------------------------
 
   // send to facebook to do the authentication

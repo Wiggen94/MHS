@@ -13,6 +13,7 @@ var userSchema = mongoose.Schema({
         phone        : Number,
         email        : String,
         password     : String,
+        points       : Number,
     },
     facebook         : {
         id           : String,
