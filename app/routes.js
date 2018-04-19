@@ -494,7 +494,7 @@ module.exports = function(app, passport) {
   app.get('/firstlogin', function(req, res) {
     userService.firstLogin(req.user.id);
     res.render('login.ejs', {
-      message: "Bruker opprettet, du kan nå logge inn"
+      message: "Bruker opprettet, du kan nå logge inn etter at din bruker har blitt godkjent av administrator"
     });
   });
   // facebook -------------------------------
