@@ -41,6 +41,8 @@ Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til n
 ```
 WINDOWS:
 Skriv npm install i kommandovinduet
+Bruk "nodemon server.js" for å kjøre server.js
+
 MAC:
 Skriv sudo npm install i terminal etterfulgt av ditt passord.
 Bruk "nodemon server.js" for å kjøre server.js
