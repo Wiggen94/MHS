@@ -45,7 +45,7 @@ Bruk "npm run dev" for å kjøre server.js
 
 MAC:
 Skriv sudo npm install i terminal etterfulgt av ditt passord.
-Bruk "npm run dev" for å kjøre server.js
+Bruk "sudo npm run dev" for å kjøre server.js
 ```
 HVIS BRUKEREN DIN IKKE KOMMER OPP ETTER AT DU HAR REGISTRERT ELLER DU FÅR FEILMELDING ETTER REGISTRERING SÅ AVSLUTT
 PROGRAMMET OG KJØR "NPM RUN DEV" PÅ NYTT.
