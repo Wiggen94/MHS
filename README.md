@@ -49,7 +49,7 @@ Bruk "nodemon server.js" for å kjøre server.js
 For å vise klientsiden av programmet kan du enten gå til
 http://localhost:8080
 
-Eller du kan bruke nativefier for å oprette en kjørbar fil ved å skrive følgende i kommandovinduet
+Eller du kan bruke nativefier for å opprette en kjørbar fil ved å skrive følgende i kommandovinduet
 
 ```
 nativefier http://localhost:8080
