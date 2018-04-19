@@ -19,6 +19,9 @@
           <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
+          <% if (isAdmin[0].isAdmin === 1) { %>
+          <li><a href="/admin">Admin</a></li>
+          <% } %>
           <li><a href="/profile">Profil</a></li>
           <li class="active"><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
@@ -27,7 +30,8 @@
         </ul>
       </div>
     </nav>
-    <div class="jumbotron d-flex align-items-center">
+    <h1 class="text-center">Opprett arrangement</h1>
+    <div class="jumbotron d-flex align-items-center text center">
       <div class="text-center">
         <form action="/add-event" method="post">
           <div class="form-group">
@@ -60,16 +64,14 @@
           </div>
           <div class="form-group"
           <label for="vaktmal">Vaktmal</label>
-          <select class="form-control" id="vaktmal">
-              <option>Skihytta</option>
-              <option>Lerkendal</option>
-              <option>Granåsen</option>
-              <option>Hjelpekorpsprøve</option>
+          <select class="form-control" name="vaktmal">
+              <% for (let i=0; i<eventMal.length; i++) { %>
+              <option value="<%= eventMal[i].key %>"><%= eventMal[i].navn %></option>
+            <% } %>
           </select>
           </div>
             <button type="submit" class="btn btn-warning btn-lg">Legg til nytt arrangement</button>
         </form>
-
 </div>
 
 

@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-
+app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport

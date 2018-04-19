@@ -1,12 +1,13 @@
 const mysql = require('mysql');
-var connection = mysql.createConnection({
+var connection = mysql.createPool({
+  connectionLimit: 10,
   host: 'mysql.stud.iie.ntnu.no',
   user: 'g_oops_2',
   password: '4JqXIUT3',
   database: 'g_oops_2'
 });
 
-var Usermodel      = require('../app/models/user');
+var Usermodel = require('../app/models/user');
 var userService = require('./services.js');
 module.exports = function(app, passport) {
 
@@ -22,111 +23,400 @@ module.exports = function(app, passport) {
   });
 
   // PROFILE SECTION =========================
+
+  // HENTER /profile og sjekker om brukeren er logget inn via middleware funksjonen nederst i routers.js.
   app.get('/profile', isLoggedIn, function(req, res) {
-    userService.getUsers((result) => {
+    // Oppretter muligRolle array som lagrer rollene til innlogget bruker i et array for henting på andre sider.
+    var muligRolle = req.session.muligRolle = [];
+    // Kjører aktuelle spørringer
     userService.getPoints(req.user.id, (points) => {
-      console.log (points);
       userService.getEvents((results) => {
-        res.render('profile.ejs', {
-          users: result,
-          events: results,
-          user: req.user,
-          points: points
+        userService.getUser(req.user.id, (isAdmin) => {
+          userService.getKompetanse(req.user.id, (kompetanse) => {
+            // En liste over definerte roller i henhold til kompetanse
+            let roller = [{
+                key: "Sanitet",
+                krav: ["Hjelpekorpsprøve"]
+              },
+              {
+                key: "Ambulansemedhjelper",
+                krav: ["Ambulansesertifisering", "Hjelpekorpsprøve"]
+              },
+              {
+                key: "Ambulansesjåfør",
+                krav: ["Hjelpekorpsprøve", "Ambulansesertifisering", "Førerkort 160 utrykningskjøring"]
+              },
+              {
+                key: "3 mann ambulanse",
+                krav: ["Hjelpekorpsprøve", "Videregående førstehjelpskurs"]
+              },
+              {
+                key: "Båtfører",
+                krav: ["Hjelpkorpsprøve", "Båtførerprøven", "Maritimt VHF-sertifikat", "Videregående sjøredningskurs"]
+              },
+              {
+                key: "Båtmedhjelper",
+                krav: ["Hjelpkorpsprøve", "Ambulansesertifisering", "Kvalifisert sjøredningskurs"]
+              },
+              {
+                key: "Båtmannskap",
+                krav: ["Hjelpekorpsprøve", "Kvalifisert sjøredningskurs"]
+              },
+              {
+                key: "Vaktleder",
+                krav: ["Hjelpekorpsprøve", "Vaktlederkurs"]
+              },
+              {
+                key: "Scootermedhjelper",
+                krav: ["Hjelpekorpsprøve", "Ambulansesertifisering", "Kvalifisert kurs søk og redning vinter"]
+              },
+              {
+                key: "Scootersjåfør",
+                krav: ["Hjelpekorpsprøve", "Kvalifisert kurs søk og redning vinter", "Kvalifisert snøscooterkurs", "Førerkort S snøscooter", "Førerkort BE tilhenger"]
+              },
+              {
+                key: "3 mann scooter",
+                krav: ["Hjelpekorpsprøve", "Videregående førstehjelpskurs", "Kvalifisert kurs søk og redning"]
+              },
+              {
+                key: "ATV fører",
+                krav: ["Hjelpekorpsprøve", "Kvalifisert kurs søk og redning sommer", "Kvalifisert ATV kurs", "Førerkort BE tilhenger"]
+              },
+              {
+                key: "Distriktssensor",
+                krav: ["Hjelpekorpsprøve", "Distriktsensorkurs"]
+              },
+              {
+                key: "Under opplæring",
+                krav: []
+              },
+              {
+                key: "Markør",
+                krav: []
+              }
+            ];
+            // Definerer "variabler" til bruk i /views for å opprette siden for den aktuelle brukeren
+            res.render('profile.ejs', {
+              isAdmin: isAdmin,
+              events: results,
+              kompetanse: kompetanse,
+              user: req.user,
+              points: points,
+              roller: roller,
+              muligRolle: muligRolle
+            });
+          });
         });
-      });
       });
     });
   });
 
-  // CHANGE PROFILE SECTION =========================
+  // FUNKSJON FOR Å SLETTE ET ARRANGEMENT
+  app.post('/remove-event', function(req, res) {
+    connection.query('DELETE FROM Arrangement where arr_id=?', [req.body.removeEvent], function(error, result) {
+      if (error) throw error;
+      res.redirect('/profile');
+    });
+  });
+
+
+  ///////////// ENDRE PROFIL SEKSJON
+
+  // HENTER ENDRE-PROFIL SIDEN FOR AKTUELLE BRUKER
   app.get('/profile/editprofile', function(req, res) {
-        res.render('editprofile.ejs', {
-          user: req.user
-        });
+    userService.getUser(req.user.id, (isAdmin) => {
+      res.render('editprofile.ejs', {
+        user: req.user,
+        isAdmin: isAdmin
+      });
+    });
+  });
+  // FUNKSJON SOM HENTER DATA TIL BRUK FOR Å OPPDATERE BRUKER I DATABASEN
+  app.post('/edit-profile', function(req, res) {
+    userService.addKompetanse(req.user.id, req.body.addCompetence, req.body.gyldigFra, req.body.gyldigTil, (kompetanse) => {
+      if (req.body.changeName == "") {
+        req.body.changeName = req.user.local.name;
+      }
+      if (req.body.changePhone == null) {
+        req.body.changePhone = req.user.local.phone;
+      }
+      if (req.body.changeEmail == "") {
+        req.body.changePhone = req.user.local.email;
+      }
+      Usermodel.findByIdAndUpdate(req.user.id, {
+        local: {
+          name: req.body.changeName,
+          phone: req.body.changePhone,
+          email: req.body.changeEmail,
+          password: req.user.local.password
+        }
+      }, function(err, response) {
+        res.redirect('/profile');
+      });
+    });
   });
 
-  app.post('/edit-profile', function(req, res) {
-Usermodel.findByIdAndUpdate(req.user.id,{
-  local:{
-    name: req.body.changeName,
-    phone: req.body.changePhone,
-    email: req.body.changeEmail
-  }
-},    function(err, response){
-        console.log(response);
-        res.redirect('/profile');
-    console.log(res);
-  });
+  // ADMIN-PANEL ===========================
+  app.get('/admin', function(req, res) {
+    userService.getIkkeGodkjenteBrukere((result) => {
+    userService.getDeltakelse((deltakelse) => {
+      res.render('admin.ejs', {
+        ikkeGodkjent: result,
+        deltakelse: deltakelse
+      });
     });
-  // LOGOUT ==============================
-  app.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
+  });
+  });
+  // GODKJENNE BRUKERE
+  app.post('/approve-user', function(req, res) {
+    connection.query('UPDATE users_rettigheter SET isGodkjent=1 WHERE users_id=?', [req.body.approveUser], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/admin');
+
+  });
+  // GJØRE OM BRUKER TIL ADMIN
+  app.post('/approve-admin', function(req, res) {
+    connection.query('UPDATE users_rettigheter SET isAdmin=1 WHERE users_id=?', [req.body.approveAdmin], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/admin');
+  });
+  // GODKJENNE VAKT
+  app.post('/approve-deltakelse', function(req, res) {
+    connection.query('UPDATE deltakelse SET isGodkjent=1 WHERE users_id=?', [req.body.approveDeltakelse], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/admin');
   });
   // CONTACT SECTION =======================
   app.get('/contact', function(req, res) {
-    res.render('contact.ejs', {
-      user: req.user
+    userService.getUser(req.user.id, (isAdmin) => {
+      res.render('contact.ejs', {
+        user: req.user,
+        isAdmin: isAdmin,
+      });
     });
   });
 
   // SEARCH SECTION ========================
   app.get('/search', function(req, res) {
-    var test = "";
-    res.render('search.ejs', {
-      user: req.user,
-      data: test
-    });
-
-  });
-
-  app.post('/search-user', function(req, res) {
-    if (req.body.searchInput == "")  {
-    } else {
-    connection.query('SELECT * from users where localName like ? order by localName', ["%" + req.body.searchInput + "%"], function(error, result) {
-      if (error) throw error;
-      console.log(result);
-
+    userService.getUser(req.user.id, (isAdmin) => {
+      test = "";
 
       res.render('search.ejs', {
         user: req.user,
-        data: result
+        data: test,
+        isAdmin: isAdmin
       });
     });
-}
+  });
+
+  // FUNKSON SOM HENTER VALUE FRA SØKEFELT FOR Å SØKE ETTER BRUKER
+  app.post('/search-user', function(req, res) {
+    userService.getUser(req.user.id, (isAdmin) => {
+      if (req.body.searchInput == "") {} else {
+        connection.query('SELECT * from users where localName like ? order by localName', ["%" + req.body.searchInput + "%"], function(error, results) {
+          if (error) throw error;
+
+
+          res.render('search.ejs', {
+            user: req.user,
+            data: results,
+            isAdmin: isAdmin
+          });
+        });
+      }
+    });
   });
 
   // EVENT SECTION ========================
   app.get('/events', function(req, res) {
-    var test = "";
-    res.render('events.ejs', {
-      user: req.user,
+    let eventMal = [{
+        key: 0,
+        navn: "Skihytte",
+        krav: [{
+          rolle: "Vaktleder",
+          antall: 1
+        }, {
+          rolle: "Sanitet",
+          antall: 4
+        }, {
+          rolle: "Scootersjåfør",
+          antall: 1
+        }, {
+          rolle: "Scootermedhjelper",
+          antall: 1
+        }, {
+          rolle: "3 mann scooter",
+          antall: 1
+        }]
+      },
+      {
+        key: 1,
+        navn: "Fotballkamp",
+        krav: [{
+          rolle: "Vaktleder",
+          antall: 1
+        }, {
+          rolle: "Sanitet",
+          antall: 8
+        }, {
+          rolle: "Ambulansesjåfør",
+          antall: 4
+        }, {
+          rolle: "Ambulansemedhjelper",
+          antall: 4
+        }, {
+          rolle: "3 mann ambulanse",
+          antall: 4
+        }]
+      },
+      {
+        key: 2,
+        navn: "Triatlon",
+        krav: [{
+          rolle: "Sanitet",
+          antall: 2
+        }, {
+          rolle: "Båtfører",
+          antall: 1
+        }, {
+          rolle: "Båtmedhjelper",
+          antall: 1
+        }, {
+          rolle: "Båtmannskap",
+          antall: 1
+        }]
+      },
+      {
+        key: 3,
+        navn: "Hjelpekorpsprøve",
+        krav: [{
+          rolle: "Distriktsensor",
+          antall: 1
+        }, {
+          rolle: "Sanitet",
+          antall: 14
+        }, {
+          rolle: "Markør",
+          antall: 4
+        }]
+      }
+    ];
+    userService.getUser(req.user.id, (isAdmin) => {
+      res.render('events.ejs', {
+        user: req.user,
+        eventMal: eventMal,
+        isAdmin: isAdmin
+      });
     });
-
   });
-  var i=0;
   app.get("/event/:arr_id", function(req, res) {
+    let eventMal = [{
+        key: 1,
+        navn: "Skihytte",
+        krav: [{
+          rolle: "Vaktleder",
+          antall: 1
+        }, {
+          rolle: "Sanitet",
+          antall: 4
+        }, {
+          rolle: "Scootersjåfør",
+          antall: 1
+        }, {
+          rolle: "Scootermedhjelper",
+          antall: 1
+        }, {
+          rolle: "3 mann scooter",
+          antall: 1
+        }]
+      },
+      {
+        key: 2,
+        navn: "Fotballkamp",
+        krav: [{
+          rolle: "Vaktleder",
+          antall: 1
+        }, {
+          rolle: "Sanitet",
+          antall: 8
+        }, {
+          rolle: "Ambulansesjåfør",
+          antall: 4
+        }, {
+          rolle: "Ambulansemedhjelper",
+          antall: 4
+        }, {
+          rolle: "3 mann ambulanse",
+          antall: 4
+        }]
+      },
+      {
+        key: 3,
+        navn: "Triatlon",
+        krav: [{
+          rolle: "Sanitet",
+          antall: 2
+        }, {
+          rolle: "Båtfører",
+          antall: 1
+        }, {
+          rolle: "Båtmedhjelper",
+          antall: 1
+        }, {
+          rolle: "Båtmannskap",
+          antall: 1
+        }]
+      },
+      {
+        key: 4,
+        navn: "Hjelpekorpsprøve",
+        krav: [{
+          rolle: "Distriktsensor",
+          antall: 1
+        }, {
+          rolle: "Sanitet",
+          antall: 14
+        }, {
+          rolle: "Markør",
+          antall: 4
+        }]
+      }
+    ];
     userService.getEvents((results) => {
-      res.render('event.ejs', {
-        id: req.params.arr_id,
-        events: results
+      for (let event of results) {
+        this.event = results;
+      }
+      userService.getUser(req.user.id, (isAdmin) => {
+        res.render('event.ejs', {
+          id: req.params.arr_id,
+          events: results,
+          isAdmin: isAdmin,
+          eventMal: eventMal,
+          muligRolle: req.session.muligRolle
+        });
       });
 
     });
+  });
+
+  app.post('/add-vakt', function(req, res) {
+    connection.query('INSERT INTO deltakelse (arr_id, users_id, rolleNavn, poengMottatt) values (?, ?, ?, 10);', [req.body.thisEvent, req.user.id, req.body.addVakt], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/profile');
+
   });
 
   // OPRETTE ARRANGEMENTER ==========================
 
   app.post('/add-event', function(req, res) {
-    connection.query('INSERT INTO Arrangement (navn, fraDato, tilDato, startTid, sluttTid) values (?, ?, ?, ?, ?);', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.fromTime, req.body.toTime], function(error, result) {
+    connection.query('INSERT INTO Arrangement (navn, fraDato, tilDato, startTid, sluttTid, postSted, adresse) values (?, ?, ?, ?, ?, ?, ?);', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.fromTime, req.body.toTime, req.body.poststed, req.body.adresse], function(error, result) {
       if (error) throw error;
     });
-    connection.query('INSERT INTO Sted (postSted, adresse) values (?, ?);', [req.body.poststed, req.body.adresse], function(error, result) {
-      if (error) throw error;
-    });
-    res.render('events.ejs', {
-      user: req.user,
-    });
+    res.redirect('/profile');
 
   });
 
@@ -159,11 +449,14 @@ Usermodel.findByIdAndUpdate(req.user.id,{
   });
 
   /* ===========================================================================
-  IKKE ENDRE NOE UNDER HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!============
+     !!!!!!!!!!!!!!!!!IKKE ENDRE NOE UNDER HER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     ===========================================================================
   */
-  // ===========================================================================
-  // AUTHENTICATE (FIRST LOGIN) ================================================
-  // ===========================================================================
+  // LOGOUT ==============================
+  app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+  });
 
   // locally --------------------------------
   // LOGIN ===============================
@@ -198,12 +491,12 @@ Usermodel.findByIdAndUpdate(req.user.id,{
 
 
   // first login
-  app.get('/firstlogin', function(req,res){
-  userService.firstLogin(req.user.id);
-  res.render('login.ejs', {
-    message: "Bruker opprettet, du kan nå logge inn"
+  app.get('/firstlogin', function(req, res) {
+    userService.firstLogin(req.user.id);
+    res.render('login.ejs', {
+      message: "Bruker opprettet, du kan nå logge inn"
+    });
   });
-});
   // facebook -------------------------------
 
   // send to facebook to do the authentication
@@ -236,18 +529,6 @@ Usermodel.findByIdAndUpdate(req.user.id,{
   // ===========================================================================
   // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) ===========
   // ===========================================================================
-
-  // locally --------------------------------
-  app.get('/connect/local', function(req, res) {
-    res.render('connect-local.ejs', {
-      message: req.flash('loginMessage')
-    });
-  });
-  app.post('/connect/local', passport.authenticate('local-signup', {
-    successRedirect: '/profile', // redirect to the secure profile section
-    failureRedirect: '/connect/local', // redirect back to the signup page if there is an error
-    failureFlash: true // allow flash messages
-  }));
 
   // facebook -------------------------------
 
@@ -311,24 +592,9 @@ Usermodel.findByIdAndUpdate(req.user.id,{
     user.save(function(err) {
       res.redirect('/profile');
     });
-
-
-
-    // route middleware to ensure user is logged in
-
-
-
   });
-
-
-
-
-
-
-
-
 };
-
+// route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated())
     return next();

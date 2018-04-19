@@ -18,6 +18,9 @@
           <a href="/" class="navbar-brand" style: "font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
+          <% if (isAdmin[0].isAdmin === 1) { %>
+          <li><a href="/admin">Admin</a></li>
+          <% } %>
           <li class="active"><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
@@ -45,17 +48,46 @@
             <form action="/edit-profile" method="post">
               <div class="form-group">
                   <label>Endre navn</label>
-                  <input type="text" class="form-control" name="changeName" required />
+                  <input type="text" class="form-control" name="changeName" />
               </div>
           <div class="form-group">
           <label>Endre Telefonnummer</label>
-          <input type="number" class="form-control" name="changePhone" required />
+          <input type="number" class="form-control" name="changePhone" />
         </div>
                 <div class="form-group">
                     <label>Endre E-post</label>
-                    <input type="text" class="form-control" name="changeEmail" required />
+                    <input type="text" class="form-control" name="changeEmail" />
                 </div>
+          <div class="form-group">
+            <label>Legg til kompetanse</label> </br>
+            <select name="addCompetence">
+              <option value="">Ingen</option>
+              <optgroup label="Førerkort">
+                 <option value="Førerkort 160 utrykningskjøring">Førerkort 160 utrykningskjøring</option>
+                 <option value="Førerkort S snøscooter">Førerkort S snøscooter</option>
+                 <option value="Førerkort BE tilhenger">Førerkort BE tilhenger</option>
+               </optgroup>
+               <optgroup label="Kurs og prøver">
+                 <option value="Ambulansesertifisering">Ambulansesertifisering</option>
+                 <option value="Båtførerprøven">Båtførerprøven</option>
+                 <option value="Distriktsensorkurs">Distriktsensorkurs</option>
+                 <option value="Hjelpekorpsprøve">Hjelpekorpsprøve</option>
+                 <option value="Kvalifisert ATV kurs">Kvalifisert ATV kurs</option>
+                 <option value="Kvalifisert kurs søk og redning">Kvalifisert kurs søk og redning</option>
+                 <option value="Kvalifisert kurs søk og redning sommer">Kvalifisert kurs søk og redning sommer</option>
+                 <option value="Kvalifisert kurs søk og redning vinter">Kvalifisert kurs søk og redning vinter</option>
+                 <option value="Kvalifisert snøscooterkurs">Kvalifisert snøscooterkurs</option>
+                 <option value="Kvalifisert sjøredningskurs">Kvalifisert sjøredningskurs</option>
+                 <option value="Maritimt VHF-sertifikat">Maritimt VHF-sertifikat</option>
+                 <option value="Vaktlederkurs">Vaktlederkurs</option>
+                 <option value="Videregående sjøredningskurs">Videregående sjøredningskurs</option>
+                 <option value="Videregående førstehjelpskurs">Videregående førstehjelpskurs</option>
+               </optgroup>
 
+              </select> </br>
+                Gyldig fra: <input type="date" name="gyldigFra" required/>
+                Gyldig til: <input type="date" name="gyldigTil" required/>
+          </div>
                 <button type="submit" class="btn btn-warning btn-lg">Endre informasjon</button>
             </form>
 

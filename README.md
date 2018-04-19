@@ -39,15 +39,14 @@ For eksempel "cd C:\Users\USERNAME\master".
 Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til nodejs for å kjøre prosjektet
 
 ```
-Skriv "npm install" i kommandovinduet
-Bruk "npm run dev" for å kjøre server.js
-Bruk "nodemon server.js" på OS X
+Skriv npm install i kommandovinduet
+Bruk "nodemon server.js" for å kjøre server.js
 ```
 
 For å vise klientsiden av programmet kan du enten gå til
 http://localhost:8080
 
-Eller du kan bruke nativefier for å opprette en kjørbar fil ved å skrive følgende i kommandovinduet
+Eller du kan bruke nativefier for å oprette en kjørbar fil ved å skrive følgende i kommandovinduet
 
 ```
 nativefier http://localhost:8080

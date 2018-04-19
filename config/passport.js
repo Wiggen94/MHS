@@ -6,6 +6,7 @@ var GoogleStrategy   = require('passport-google-oauth').OAuth2Strategy;
 
 // load up the user model
 var User       = require('../app/models/user');
+var userService = require('../app/services.js');
 
 // load the auth variables
 var configAuth = require('./auth'); // use this one for testing
@@ -47,20 +48,24 @@ module.exports = function(passport) {
                 // if there are any errors, return the error
                 if (err)
                     return done(err);
+                // check if user is approved
 
                 // if no user is found, return the message
                 if (!user)
-                    return done(null, false, req.flash('loginMessage', 'No user found.'));
+                    return done(null, false, req.flash('loginMessage', 'Bruker ikke funnet.'));
 
                 if (!user.validPassword(password))
-                    return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
+                    return done(null, false, req.flash('loginMessage', 'Oops! Feil passord.'));
 
+            userService.getUser(user.id,(result) => {
+                if (result[0].isGodkjent != 1)
+                        return done(null, false, req.flash('loginMessage', 'Brukeren er ikke godkjent.'));
                 // all is well, return user
                 else
                     return done(null, user);
             });
         });
-
+        });
     }));
 
     // =========================================================================
@@ -85,7 +90,6 @@ module.exports = function(passport) {
                 // if there are any errors, return the error
                 if (err)
                     return done(err);
-
                 // check to see if there's already a user with that email
                 if (existingUser)
                     return done(null, false, req.flash('signupMessage', 'That email is already taken.'));

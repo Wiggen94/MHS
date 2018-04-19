@@ -18,50 +18,50 @@
           <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
-          <% if (isAdmin[0].isAdmin === 1) { %>
-          <li><a href="/admin">Admin</a></li>
-          <% } %>
+          <li class="active"><a href="/admin">Admin</a></li>
           <li><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
-          <li class="active"><a href="/contact">Kontakt</a></li>
+          <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
         </ul>
       </div>
     </nav>
-      <h1 class="text-center">Kontakt administrator</h1>
-      <form action="/send-email" method="post">
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="form-group col-md-4">
-            <label for="from">Din epost:</label>
-            <input type="email" class="form-control" name="from">
-          </div>
-        </div>
+      <h1 class="text-center">Admin-panel</h1>
+        <div class="jumbotron d-flex align-items-center">
+          <h2>Ikke godkjente brukere</h2>
+          <% for (let i=0; i<ikkeGodkjent.length; i++) { %>
+          <% if (ikkeGodkjent[i].isGodkjent === 0) { %>
+          <% ikkeGodkjent[i].isGodkjent = "Ikke godkjent" %>
+          <li>
+          <form action="/approve-user" method="post">
+          <%= ikkeGodkjent[i].localName + " " + ikkeGodkjent[i].isGodkjent %>
+                    <input type="hidden" value="<%- ikkeGodkjent[i].users_id %>" name="approveUser">
+                  <button type="submit" class="btn btn-success btn-lg">Godkjenn</button>
+              </form>
+            </li>
+          <% } %>
+          <% } %>
 
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="form-group col-md-4">
-            <label for="subject">Emne:</label>
-            <input type="text" class="form-control" name="subject">
           </div>
-        </div>
+    <div class="jumbotron d-flex align-items-center">
+      <h2>Ikke godkjente vakter</h2>
+      <% for (let i=0; i<deltakelse.length; i++) { %>
+      <% if (deltakelse[i].isGodkjent === 0) { %>
+      <% deltakelse[i].isGodkjent = "Ikke godkjent" %>
+      <li>
+      <form action="/approve-deltakelse" method="post">
+      <%= deltakelse[i].localName + " vil ha vakten " + deltakelse[i].rolleNavn + " på arrangementet " + deltakelse[i].navn %>
+                <input type="hidden" value="<%- deltakelse[i].users_id %>" name="approveDeltakelse">
+              <button type="submit" class="btn btn-success btn-lg">Godkjenn</button>
+          </form>
+        </li>
+      <% } %>
+      <% } %>
+          </div>
 
-        <div class="row">
-          <div class="col-md-4"></div>
-            <div class="form-group col-md-4">
-              <label for="body">Innhold:</label>
-              <textarea cols="5" rows="5"class="form-control" name="body"></textarea>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="form-group col-md-4">
-            <button type="submit" class="btn btn-success">Send</button>
-          </div>
-        </div>
-      </form>
     </div>
+
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

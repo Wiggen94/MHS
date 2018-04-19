@@ -5,7 +5,6 @@
     <title>Mannskapshåndteringssystem</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel='stylesheet' href='fullcalendar-3.8.2/fullcalendar.css' />
     <link rel="stylesheet" href="../styles.css">
 
 </head>
@@ -19,6 +18,9 @@
           <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
+          <% if (isAdmin[0].isAdmin === 1) { %>
+          <li><a href="/admin">Admin</a></li>
+          <% } %>
           <li><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
@@ -29,6 +31,9 @@
     </nav>
     <div class="jumbotron d-flex align-items-center">
       <h2><%- events[id].navn %></h2>
+      <ul>
+
+
       <li>
         Fra dato: <%- events[id].fraDato.toDateString() %>
       </li>
@@ -41,24 +46,49 @@
       <li>
         Til kl: <%- events[id].sluttTid.replace(':00','') %>
       </li>
+
+      <% let rolleKravList = []; %>
+      <% let availableList = []; %>
+      <% for (let x of eventMal[events[id].eventKrav].krav) { %>
+      <% if (x.antall === 0) { %>
+      <% continue; %>
+      <% } else { %>
+      <% rolleKravList.push(" " + x.antall +"stk " + x.rolle); %>
+      <% x.antall--; %>
+      <% } %>
+      <% if (muligRolle.indexOf(" " + x.rolle) >= 0) { %>
+      <% availableList.push(x.rolle); %>
+      <% } %>
+      <% } %>
+      <li>
+        Ledige vakter:
+          <%= rolleKravList %>
+      </li>
+      <li>  <form action="/add-vakt" method="post">
+          <div class="form-group">
+                  <input type="hidden" value="<%- events[id].arr_id %>" name="thisEvent">
+              <label>Du kan ta følgende vakter:</label>
+              <select name="addVakt">
+                <% for (let i=0; i<availableList.length; i++) { %>
+                <option>
+                  <%= availableList[i] %>
+                </option>
+                                <% } %>
+              </select>
+          </div>
+            <button type="submit" class="btn btn-warning btn-lg">Ta vakt</button>
+        </form>
+
+
+      </li>
+      </ul>
+
+
     </div>
   </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src='fullcalendar-3.8.2/lib/jquery.min.js'></script>
-<script src='fullcalendar-3.8.2/lib/moment.min.js'></script>
-<script src='fullcalendar-3.8.2/fullcalendar.js'></script>
-<script src='fullcalendar-3.8.2/locale/nb.js'></script>
-<script>$(document).ready(function() {
-
-  // page is now ready, initialize the calendar...
-
-  $('#calendar').fullCalendar({
-    defaultView: 'month',
-  })
-
-});</script>
 </body>
 </html>

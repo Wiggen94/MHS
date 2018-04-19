@@ -19,6 +19,9 @@
           <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
+          <% if (isAdmin[0].isAdmin === 1) { %>
+          <li><a href="/admin">Admin</a></li>
+          <% } %>
           <li><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
           <li  class="active"><a href="/search">Søk</a></li>
@@ -40,20 +43,31 @@
 
     </div>
     <ul>
-      Søkeresultater
-      <% for(var i=0; i<data.length; i++) {%>
+
+      <% for(var i=0; i<data.length; i++) { %>
+              Søkeresultater
 <div class="well">
+        <% if (isAdmin[0].isAdmin === 1) { %>
         <li>
           <h3><%= data[i].localName %></h3>
           <p>
-
-
           Tlf: <%= data[i].localPhone %> </br>
-
+          Epost:<a href=mailto:<%= data[i].localEmail %> </a> <%= data[i].localEmail %></br>
+          </p>
+          <form action="/approve-admin" method="post">
+                    <input type="hidden" value="<%- data[i].id %>" name="approveAdmin">
+                  <button type="submit" class="btn btn-success btn-xs">Gjør til admin</button>
+              </form>
+        </li>
+        <% } else { %>
+        <li>
+          <h3><%= data[i].localName %></h3>
+          <p>
+          Tlf: <%= data[i].localPhone %> </br>
           Epost:<a href=mailto:<%= data[i].localEmail %> </a> <%= data[i].localEmail %></br>
           </p>
         </li>
-        <% } %>
+        <% } } %>
     </ul>
     </div>
   </div>
