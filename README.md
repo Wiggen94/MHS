@@ -41,12 +41,15 @@ Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til n
 ```
 WINDOWS:
 Skriv npm install i kommandovinduet
-Bruk "nodemon server.js" for å kjøre server.js
+Bruk "npm run dev" for å kjøre server.js
 
 MAC:
 Skriv sudo npm install i terminal etterfulgt av ditt passord.
-Bruk "nodemon server.js" for å kjøre server.js
+Bruk "npm run dev" for å kjøre server.js
 ```
+HVIS BRUKEREN DIN IKKE KOMMER OPP ETTER AT DU HAR REGISTRERT ELLER DU FÅR FEILMELDING ETTER REGISTRERING SÅ AVSLUTT
+PROGRAMMET OG KJØR "NPM RUN DEV" PÅ NYTT.
+
 
 For å vise klientsiden av programmet kan du enten gå til
 http://localhost:8080
