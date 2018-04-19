@@ -39,7 +39,10 @@ For eksempel "cd C:\Users\USERNAME\master".
 Når du har kommet inn i riktig mappe må vi installere alle avhengigheten til nodejs for å kjøre prosjektet
 
 ```
+WINDOWS:
 Skriv npm install i kommandovinduet
+MAC:
+Skriv sudo npm install i terminal etterfulgt av ditt passord.
 Bruk "nodemon server.js" for å kjøre server.js
 ```
 
