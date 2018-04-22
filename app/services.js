@@ -11,7 +11,7 @@ var connection = mysql.createPool({
 
 module.exports = {
 
-// GIR EN BRUKER POENG VED FØRSTE PÅLOGGING
+  // GIR EN BRUKER POENG VED FØRSTE PÅLOGGING
   firstLogin(id) {
     connection.query('INSERT INTO users_poeng (users_id) values(?)', [id], (error) => {
       if (error) throw error;
@@ -20,9 +20,9 @@ module.exports = {
       if (error) throw error;
     });
   },
-/* ========================================================
-========================================================
-===================================================== TA BORT GET USERS */
+
+
+  // SPØRRING FOR Å SJEKKE RETTIGHETER TIL BRUKER
   getUser(id, callback) {
     connection.query('SELECT * FROM users_rettigheter WHERE users_id=?', [id], (error, result) => {
       if (error) throw error;
@@ -35,9 +35,23 @@ module.exports = {
       if (error) throw error;
     });
   },
-  // HENTER ALLE ARRANGEMENTER FOR Å PUTTE DE INN I KALENDEREN
+  // HENTER GJELDENDE ARRANGEMENT
+  getEvent(thisEvent, callback) {
+    connection.query('SELECT * FROM Arrangement WHERE arr_id=?', [thisEvent], (error, results) => {
+      if (error) throw error;
+      callback(results);
+    });
+  },
+  // HENTER ALLE KOMMENDE ARRANGEMENTER FOR Å PUTTE DE INN I KALENDEREN
   getEvents(callback) {
-    connection.query('SELECT * FROM Arrangement', (error, results) => {
+    connection.query('SELECT * FROM Arrangement WHERE tilDato >= CURDATE()', (error, results) => {
+      if (error) throw error;
+      callback(results);
+    });
+  },
+  // HENTER ALLE KOMMENDE ARRANGEMENTER FOR Å PUTTE DE INN I KALENDEREN
+  getPastEvents(callback) {
+    connection.query('SELECT * FROM Arrangement WHERE tilDato <= CURDATE()', (error, results) => {
       if (error) throw error;
       callback(results);
     });
@@ -57,30 +71,61 @@ module.exports = {
   },
   // HENTER KOMPETANSE FOR AKTUELL BRUKER
   getKompetanse(id, callback) {
-    connection.query('SELECT kompetanse_navn FROM users_kompetanse WHERE users_id=?', [id], (error, kompetanse) => {
+    connection.query('SELECT kompetanse_navn FROM users_kompetanse WHERE users_id=? AND isGodkjent=1', [id], (error, kompetanse) => {
       if (error) throw error;
       callback(kompetanse);
     });
   },
   // SPØRRING FOR Å LEGGE TIL KOMPETANSE
   addKompetanse(id, kompetanse, gyldigFra, gyldigTil, callback) {
-    if (kompetanse != ""){
-    connection.query('INSERT INTO users_kompetanse SET users_id=?, kompetanse_navn=?, gyldigFra=?, gyldigTil=?  ON DUPLICATE KEY UPDATE kompetanse_navn=kompetanse_navn', [id, kompetanse, gyldigFra, gyldigTil], (error, kompetanse) => {
-      if (error) throw error;
+    if (kompetanse != "") {
+      connection.query('INSERT INTO users_kompetanse SET users_id=?, kompetanse_navn=?, gyldigFra=?, gyldigTil=?  ON DUPLICATE KEY UPDATE kompetanse_navn=kompetanse_navn', [id, kompetanse, gyldigFra, gyldigTil], (error, kompetanse) => {
+        if (error) throw error;
+        callback();
+      });
+    } else {
       callback();
-    });
-  } else {
-    callback();
-  }
+    }
   },
+  // HENTER ALLE SOM DELTAR PÅ ET ARRANGEMENT
   getDeltakelse(callback) {
-    connection.query('SELECT * FROM deltakelse INNER JOIN Arrangement ON deltakelse.arr_id = Arrangement.arr_id INNER JOIN users ON deltakelse.users_id = users.id', (error, result) => {
+    connection.query('SELECT * FROM deltakelse INNER JOIN users ON deltakelse.users_id = users.id INNER JOIN Arrangement on deltakelse.arr_id = Arrangement.arr_id', (error, result) => {
       if (error) throw error;
       callback(result);
     });
   },
+    // HENTER ALLE ARRANGEMENTER EN BRUKER DELTAR PÅ
+  getThisDeltakelse(thisEvent, callback) {
+    connection.query('SELECT * FROM deltakelse INNER JOIN users ON deltakelse.users_id = users.id WHERE arr_id=? AND isGodkjent=1', [thisEvent], (error, result) => {
+      if (error) throw error;
+      callback(result);
+    });
+  },
+    // HENTER ALLE SOM DELTAR PÅ ET ARRANGEMENT OG SOM ER GODKJENT
+  getThisVakter(thisVakt, callback) {
+    connection.query('SELECT * FROM deltakelse INNER JOIN Arrangement ON deltakelse.arr_id = Arrangement.arr_id WHERE users_id=? AND isGodkjent=1', [thisVakt], (error, result) => {
+      if (error) throw error;
+      callback(result);
+    });
+  },
+    // TELLER ALLE ROLLER OG VAKTER SOM ER GODKJENT FOR ET ARRANGEMENT
+  countDeltakelse(thisEvent, callback) {
+    connection.query('SELECT COUNT(rolleNavn) AS antall, rolleNavn FROM deltakelse INNER JOIN users ON deltakelse.users_id = users.id WHERE arr_id=? GROUP BY rolleNavn', [thisEvent], (error, result) => {
+      console.log(result);
+      if (error) throw error;
+      callback(result);
+    });
+  },
+  // HENTER ALLE BRUKERE SOM IKKE ER GODKJENT
   getIkkeGodkjenteBrukere(callback) {
     connection.query('SELECT * FROM users_rettigheter INNER JOIN users ON users_rettigheter.users_id = users.id', (error, result) => {
+      if (error) throw error;
+      callback(result);
+    });
+  },
+    // HENTER ALL KOMPETANSE SOM IKKE ER GODKJENT
+  getIkkeGodkjentKompetanse(callback) {
+    connection.query('SELECT * FROM users_kompetanse INNER JOIN users ON users_kompetanse.users_id = users.id', (error, result) => {
       if (error) throw error;
       callback(result);
     });

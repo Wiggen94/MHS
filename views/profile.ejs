@@ -21,9 +21,9 @@
         <ul class="nav navbar-nav">
           <% if (isAdmin[0].isAdmin === 1) { %>
           <li><a href="/admin">Admin</a></li>
+          <li><a href="/events">Arrangementer</a></li>
           <% } %>
           <li class="active"><a href="/profile">Profil</a></li>
-          <li><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
@@ -31,30 +31,47 @@
       </div>
     </nav>
 
-    <div class="row">
 
       <div class="container-fluid col-sm-4" id="rightContainer">
 
-        <div id='calendar'>
+        <div id='calendar'></div>
           </br>
 
 
-          <h3>Alle opprettede arrangementer:</h3> </br>
+          <h3>Alle arrangementer</h3> </br>
+          <h4>Kommende arrangementer</h4>
           <ul>
             <% for(let i=0; i<events.length; i++) { %>
               <li>
-                <% if (isAdmin[0].isAdmin === 1) { %>
+
                   <form action="/remove-event" method="post">
-                        <%- link_to(events[i].navn, 'event/'+i) %>
+                        <%- events[i].fraDato.toLocaleDateString() + " " + link_to(events[i].navn, 'event/'+ events[i].arr_id) %>
+                        <% if (isAdmin[0].isAdmin === 1) { %>
                         <input type="hidden" value="<%- events[i].arr_id %>" name="removeEvent">
                       <button type="submit" class="btn btn-danger btn-xs">x</button>
+                        <% } %>
                   </form>
-                <% } else { %>
-                <li><%- link_to(events[i].navn, 'event/'+i) %></li>
-              <% } } %>
+                </li>
+                <% } %>
           </ul>
-        </div>
+          <h4>Tidligere arrangementer</h4>
+          <ul>
+            <% for(let i=0; i<pastEvents.length; i++) { %>
+              <li>
+                  <form action="/remove-event" method="post">
+                        <%- events[i].fraDato.toLocaleDateString() + " " + link_to(pastEvents[i].navn, 'event/'+ pastEvents[i].arr_id) %>
+                        <% if (isAdmin[0].isAdmin === 1) { %>
+                        <input type="hidden" value="<%- pastEvents[i].arr_id %>" name="removeEvent">
+                      <button type="submit" class="btn btn-danger btn-xs">x</button>
+                      <% } %>
+                  </form>
+                </li>
+                <% } %>
+              </ul>
+
+
       </div>
+
       <!-- LOCAL INFORMATION -->
       <div class="well container-fluid col-sm-4" id="leftContainer">
 
@@ -73,25 +90,26 @@
                 <% for(let i=0; i<points.length; i++) { %>
                     <%= points[i].poeng %> </br>
                   <% } %>
+                  <% let kvaliArray = []; %>
                   <strong>Kompetanse</strong>: </br>
                   <% for(let i=0; i<kompetanse.length; i++) { %>
-                      <%= kompetanse[i].kompetanse_navn %> </br>
-                    <% } %>
-                    <strong>Roller</strong>:
-
-                  <% let kvaliArray = []; %>
-
-                  <% for(let i=0; i<kompetanse.length; i++) { %>
                   <% kvaliArray.push(kompetanse[i].kompetanse_navn); %>
-
-                  <% } %>
-
-                  <% for (let rolle of roller) { %>
-                  <% if (rolle.krav.every(v => kvaliArray.indexOf(v) >= 0)) { %>
-                  <%  muligRolle.push(" " + rolle.key); %>
+                  <form action="/remove-kompetanse" method="post">
+                        <%= kompetanse[i].kompetanse_navn %>
+                        <input type="hidden" value="<%- kompetanse[i].kompetanse_navn %>" name="thisKompetanse">
+                      <button type="submit" class="btn btn-danger btn-xs">x</button>
+                  </form>
                     <% } %>
-                  <% } %>
-                    <%= muligRolle; %>
+                    <strong>Roller</strong>: </br>
+                  <% roller.forEach((rolle) => { %>
+                  <% if (rolle.krav.every(v => kvaliArray.indexOf(v) >= 0)) { %>
+                    <%  muligRolle.push(" " + rolle.key); %>
+                  <% } }) %>
+                    <%= muligRolle; %> </br>
+                    <strong>Dine vakter</strong>: </br>
+                    <% for(let i=0; i<thisVakter.length; i++) { %>
+                        <%- thisVakter[i].rolleNavn + " på " + thisVakter[i].navn + " </br> Dato: " + thisVakter[i].fraDato.toLocaleDateString()  %> </br> </br>
+                      <% } %>
           </p>
           <a href="/profile/editprofile" class="btn btn-danger">Endre profil</a> <br /> <br />
           <% } else { %>
@@ -120,10 +138,16 @@
                         <a href="/connect/facebook" class="btn btn-primary fa fa-facebook">Koble til Facebook</a>
                         <% } %>
 
-
-      </div>
-    </div>
   </div>
+</br> </br></br> </br>
+      <div class="well container-fluid col-sm-6">
+      <h3>Kommende arrangementer</h3>
+      <div id='calendar2'></div>
+
+
+
+</div>
+</div>
 
 
 
@@ -153,8 +177,40 @@
           {
 
           title: '<%- events[i].navn %>',
-          url: '<%- 'event/'+i %>',
-          start: '<%- events[i].fraDato.toISOString().replace(/T.*Z/,'') %>',
+          url: '<%- 'event/'+ events[i].arr_id %>',
+          start: '<%- events[i].fraDato.toDateString();%> <%- events[i].startTid.replace(':00', '') %>',
+        },    <% } %>
+      ],
+
+        dayClick: function(date) {
+          if (window.confirm("Vil du legge til et nytt arrangement?"))
+          {
+          window.location.href = "/events";
+}
+
+        }
+
+      });
+      $('#calendar2').fullCalendar({
+
+        header : {
+            left : '',
+            center : '',
+            right : ''
+        },
+        defaultView: 'listYear',
+        navLinks: false, // can click day/week names to navigate views
+        editable: true,
+        eventLimit: true, // allow "more" link when too many events
+        displayEventTime: true,
+
+        events: [
+        <% for(let i=0; i<events.length; i++) { %>
+          {
+
+          title: '<%- events[i].navn %>',
+          url: '<%- 'event/'+ events[i].arr_id %>',
+          start: '<%- events[i].fraDato.toDateString();%> <%- events[i].startTid.replace(':00', '') %>',
         },    <% } %>
       ],
 

@@ -21,9 +21,9 @@
         <ul class="nav navbar-nav">
           <% if (isAdmin[0].isAdmin === 1) { %>
           <li><a href="/admin">Admin</a></li>
+          <li class="active"><a href="/events">Arrangementer</a></li>
           <% } %>
           <li><a href="/profile">Profil</a></li>
-          <li class="active"><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
@@ -61,6 +61,14 @@
           <div class="form-group">
               <label>Adresse</label>
               <input type="text" class="form-control" name="adresse">
+          </div>
+          <div class="form-group">
+              <label>Kontaktperson</label>
+              <input type="text" class="form-control" name="kontaktPerson">
+          </div>
+          <div class="form-group">
+              <label>Beskrivelse</label>
+              <input type="text" class="form-control" name="beskrivelse">
           </div>
           <div class="form-group"
           <label for="vaktmal">Vaktmal</label>

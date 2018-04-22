@@ -1,4 +1,3 @@
-// load all the things we need
 var LocalStrategy    = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy  = require('passport-twitter').Strategy;
@@ -8,16 +7,13 @@ var GoogleStrategy   = require('passport-google-oauth').OAuth2Strategy;
 var User       = require('../app/models/user');
 var userService = require('../app/services.js');
 
-// load the auth variables
-var configAuth = require('./auth'); // use this one for testing
+var configAuth = require('./auth');
 
 module.exports = function(passport) {
 
     // =========================================================================
     // passport session setup ==================================================
     // =========================================================================
-    // required for persistent login sessions
-    // passport needs ability to serialize and unserialize users out of session
 
     // used to serialize the user for the session
     passport.serializeUser(function(user, done) {
@@ -35,22 +31,19 @@ module.exports = function(passport) {
     // LOCAL LOGIN =============================================================
     // =========================================================================
     passport.use('local-login', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        passReqToCallback : true // lar oss sjekke om brukeren er pålogget
     },
     function(req, email, password, done) {
 
         // asynchronous
         process.nextTick(function() {
             User.findOne({ 'local.email' :  email }, function(err, user) {
-                // if there are any errors, return the error
+                // hvis feil, returner
                 if (err)
                     return done(err);
-                // check if user is approved
-
-                // if no user is found, return the message
+                // hvis ingen bruker er funnet, returner meldingen
                 if (!user)
                     return done(null, false, req.flash('loginMessage', 'Bruker ikke funnet.'));
 
@@ -72,29 +65,26 @@ module.exports = function(passport) {
     // LOCAL SIGNUP ============================================================
     // =========================================================================
     passport.use('local-signup', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
         nameField     : 'name',
         usernameField : 'email',
         passwordField : 'password',
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        passReqToCallback : true // lar oss sjekke om bruker er pålogget
     },
     function(req, email, password, done) {
 
         // asynchronous
         process.nextTick(function() {
 
-            //  Whether we're signing up or connecting an account, we'll need
-            //  to know if the email address is in use.
             User.findOne({'local.email': email}, function(err, existingUser) {
 
-                // if there are any errors, return the error
+                // hvis det er noen feil returner feil
                 if (err)
                     return done(err);
-                // check to see if there's already a user with that email
+                // sjekker om det allerede eksisterer en bruker med denne eposten
                 if (existingUser)
-                    return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+                    return done(null, false, req.flash('signupMessage', 'Denne eposten er allerede i bruk.'));
 
-                //  If we're logged in, we're connecting a new local account.
+                //  Hvis vi er logget inn kobler vi til en ny lokal bruker
                 if(req.user) {
                     var user            = req.user;
                     user.local.email    = email;
@@ -105,9 +95,9 @@ module.exports = function(passport) {
                         return done(null, user);
                     });
                 }
-                //  We're not logged in, so we're creating a brand new user.
+                //  Vi er ikke logget inn så vi lager en helt ny bruker
                 else {
-                    // create the user
+                    // lager bruker
                     var newUser            = new User();
 
                     newUser.local.name     = req.body.name;
@@ -138,7 +128,8 @@ module.exports = function(passport) {
         clientSecret    : configAuth.facebookAuth.clientSecret,
         callbackURL     : configAuth.facebookAuth.callbackURL,
         profileFields   : configAuth.facebookAuth.profileFields,
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        passReqToCallback : true // lar oss sjekke om bruker er logget inn eller ikke
+
 
     },
     function(req, token, refreshToken, profile, done) {
@@ -146,16 +137,19 @@ module.exports = function(passport) {
         // asynchronous
         process.nextTick(function() {
 
-            // check if the user is already logged in
+            // sjekker om bruker er logget inn eller ikke
             if (!req.user) {
 
                 User.findOne({ 'facebook.id' : profile.id }, function(err, user) {
                     if (err)
                         return done(err);
 
+                    if (!user) {
+                        return done(null, false, req.flash('loginMessage', 'Bruker ikke funnet.'));
+                    }
                     if (user) {
 
-                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        // Hvis brukeren finnes men ikke er tilkoblet facebook
                         if (!user.facebook.token) {
                             user.facebook.token = token;
                             user.facebook.name  = profile.name.givenName + ' ' + profile.name.familyName;
@@ -168,27 +162,15 @@ module.exports = function(passport) {
                             });
                         }
 
-                        return done(null, user); // user found, return that user
+                        return done(null, user); // bruker funnet, returnerer brukeren
                     } else {
-                        // if there is no user, create them
-                        var newUser            = new User();
-
-                        newUser.facebook.id    = profile.id;
-                        newUser.facebook.token = token;
-                        newUser.facebook.name  = profile.name.givenName + ' ' + profile.name.familyName;
-                        newUser.facebook.email = profile.emails[0].value;
-
-                        newUser.save(function(err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        });
+                        return done(null, false, req.flash('loginMessage', 'Det er ingen bruker registrert med denne facebook-brukeren'));
                     }
                 });
 
             } else {
-                // user already exists and is logged in, we have to link accounts
-                var user            = req.user; // pull the user out of the session
+                // // Hvis brukeren finnes men ikke er tilkoblet facebook
+                var user            = req.user; //  tar user ut av session
 
                 user.facebook.id    = profile.id;
                 user.facebook.token = token;
@@ -215,7 +197,7 @@ module.exports = function(passport) {
         clientID        : configAuth.googleAuth.clientID,
         clientSecret    : configAuth.googleAuth.clientSecret,
         callbackURL     : configAuth.googleAuth.callbackURL,
-        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        passReqToCallback : true // lar oss sjekke om bruker er logget inn eller ikke
 
     },
     function(req, token, refreshToken, profile, done) {
@@ -223,20 +205,20 @@ module.exports = function(passport) {
         // asynchronous
         process.nextTick(function() {
 
-            // check if the user is already logged in
+            // sjekker om brukeren allerede er logget inn
             if (!req.user) {
 
                 User.findOne({ 'google.id' : profile.id }, function(err, user) {
-                    if (err)
-                        return done(err);
-
+                    if (!user) {
+                        return done(null, false, req.flash('loginMessage', 'Bruker ikke funnet.'));
+                    }
                     if (user) {
 
-                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        // Hvis brukeren finnes men ikke er tilkoblet google
                         if (!user.google.token) {
                             user.google.token = token;
                             user.google.name  = profile.displayName;
-                            user.google.email = profile.emails[0].value; // pull the first email
+                            user.google.email = profile.emails[0].value; // tar den første e-posten
 
                             user.save(function(err) {
                                 if (err)
@@ -247,29 +229,18 @@ module.exports = function(passport) {
 
                         return done(null, user);
                     } else {
-                        var newUser          = new User();
-
-                        newUser.google.id    = profile.id;
-                        newUser.google.token = token;
-                        newUser.google.name  = profile.displayName;
-                        newUser.google.email = profile.emails[0].value; // pull the first email
-
-                        newUser.save(function(err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        });
+                        return done(null, false, req.flash('loginMessage', 'Det er ingen bruker registrert med denne google-brukeren'));
                     }
                 });
 
             } else {
-                // user already exists and is logged in, we have to link accounts
-                var user               = req.user; // pull the user out of the session
+                // hvis brukeren allerede eksisterer og er logget inn må de kobles sammen
+                var user               = req.user; // tar user ut av session
 
                 user.google.id    = profile.id;
                 user.google.token = token;
                 user.google.name  = profile.displayName;
-                user.google.email = profile.emails[0].value; // pull the first email
+                user.google.email = profile.emails[0].value; // tar den første e-posten
 
                 user.save(function(err) {
                     if (err)

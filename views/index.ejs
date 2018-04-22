@@ -21,7 +21,6 @@
           <a href="/" class="navbar-brand" style:"font-color: red"> <img src="/img/logo.png" style="width: 40px"> Røde Kors</a>
         </div>
         <ul class="nav navbar-nav">
-          <li class="active"><a href="/">Forside</a></li>
         </ul>
       </div>
     </nav>
@@ -30,6 +29,10 @@
 
     <div class="container text-center" id="header">
       <div class="container text-left" id="logginn">
+        <% if (message.length > 0) { %>
+            <div class="alert alert-danger"><%= message %></div>
+        <% } %>
+
           <p>Logg inn eller registrer:</p>
         <!-- LOGIN FORM -->
         <form action="/login" method="post">
@@ -54,9 +57,11 @@
         <p>Trenger du en bruker? </br>
           <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span> Registrer</a>
       </div>
-      <div class="jumbotron" id="info">
+      <div class="well" id="info">
+        <h3>Informasjon</h3>
         <p>
-          Informasjon
+          Velkommen til Røde Kors Mannskapshåndteringssystem </br>
+          Vennligst registrer deg og vent på godkjenning før du logger inn. </br>
         </p>
       </div>
 

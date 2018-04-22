@@ -39,9 +39,6 @@ p {
   float: right;
   background-color: lightgrey;
 }
-#header {
-  overflow: hidden;
-}
 #leftContainer {
   width: 50%;
   float: left;
@@ -55,4 +52,8 @@ p {
 }
 li {
   list-style-type: none;
+}
+#calendar2 {
+  width: 100%;
+  float: left;
 }

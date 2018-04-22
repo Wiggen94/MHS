@@ -20,9 +20,9 @@
         <ul class="nav navbar-nav">
           <% if (isAdmin[0].isAdmin === 1) { %>
           <li><a href="/admin">Admin</a></li>
+          <li><a href="/events">Arrangementer</a></li>
           <% } %>
           <li class="active"><a href="/profile">Profil</a></li>
-          <li><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
@@ -44,19 +44,27 @@
               <%= user.local.email %><br>
                 <strong>Fødselsdato</strong>:
                 <%= user.local.bday %><br>
+                <strong>Telefon</strong>:
+                <%= user.local.phone %><br>
           </p>
+
             <form action="/edit-profile" method="post">
+                  <input type="hidden" value="<%- user.id %>" name="thisUser" />
+                  <input type="hidden" value="<%- user.local.name %>" name="thisName" />
+                  <input type="hidden" value="<%- user.local.phone %>" name="thisPhone" />
+                  <input type="hidden" value="<%- user.local.email %>" name="thisEmail" />
+
               <div class="form-group">
                   <label>Endre navn</label>
-                  <input type="text" class="form-control" name="changeName" />
+                  <input type="text" class="form-control" value="" name="changeName" />
               </div>
           <div class="form-group">
           <label>Endre Telefonnummer</label>
-          <input type="number" class="form-control" name="changePhone" />
+          <input type="number" class="form-control" value="" name="changePhone" />
         </div>
                 <div class="form-group">
                     <label>Endre E-post</label>
-                    <input type="text" class="form-control" name="changeEmail" />
+                    <input type="text" class="form-control" value="" name="changeEmail" />
                 </div>
           <div class="form-group">
             <label>Legg til kompetanse</label> </br>
@@ -85,12 +93,12 @@
                </optgroup>
 
               </select> </br>
-                Gyldig fra: <input type="date" name="gyldigFra" required/>
-                Gyldig til: <input type="date" name="gyldigTil" required/>
+                Gyldig fra: <input type="date" name="gyldigFra" />
+                Gyldig til: <input type="date" name="gyldigTil" />
           </div>
                 <button type="submit" class="btn btn-warning btn-lg">Endre informasjon</button>
             </form>
-
+  <% if (isAdmin[0].isAdmin === 0) { %>
             </br>
               <% if (user.google.token) { %>
                 <p>
@@ -113,7 +121,11 @@
                       <% } else { %>
                         <a href="/connect/facebook" class="btn btn-primary fa fa-facebook">Koble til Facebook</a>
                         <% } %>
-
+                        <% } %>
+                        <form action="/deactivate-user" method="post">
+                          <input type="hidden" value="<%- user.id %>" name="thisUser" />
+                              <button type="submit" class="btn btn-danger btn-lg">Deaktiver bruker</button>
+                          </form>
 
       </div>
     </div>

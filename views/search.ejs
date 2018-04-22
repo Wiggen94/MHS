@@ -21,9 +21,9 @@
         <ul class="nav navbar-nav">
           <% if (isAdmin[0].isAdmin === 1) { %>
           <li><a href="/admin">Admin</a></li>
+          <li><a href="/events">Arrangementer</a></li>
           <% } %>
           <li><a href="/profile">Profil</a></li>
-          <li><a href="/events">Arrangementer</a></li>
           <li  class="active"><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
@@ -44,20 +44,29 @@
     </div>
     <ul>
 
-      <% for(var i=0; i<data.length; i++) { %>
+
               Søkeresultater
 <div class="well">
+    <% for(var i=0; i<data.length; i++) { %>
         <% if (isAdmin[0].isAdmin === 1) { %>
         <li>
           <h3><%= data[i].localName %></h3>
           <p>
           Tlf: <%= data[i].localPhone %> </br>
-          Epost:<a href=mailto:<%= data[i].localEmail %> </a> <%= data[i].localEmail %></br>
+          Epost:<a href=mailto:<%= data[i].localEmail %> > <%= data[i].localEmail %> </a></br>
           </p>
+          <form action="/change-profile" method="post">
+                    <input type="hidden" value="<%- data[i].id %>" name="thisUser">
+                  <button type="submit" class="btn btn-success btn-xs">Endre profil</button>
+              </form>
           <form action="/approve-admin" method="post">
                     <input type="hidden" value="<%- data[i].id %>" name="approveAdmin">
                   <button type="submit" class="btn btn-success btn-xs">Gjør til admin</button>
               </form>
+              <form action="/deactivate-user" method="post">
+                <input type="hidden" value="<%- data[i].id %>" name="thisUser" />
+                    <button type="submit" class="btn btn-danger btn-s">Deaktiver bruker</button>
+                </form>
         </li>
         <% } else { %>
         <li>

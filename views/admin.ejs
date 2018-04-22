@@ -19,8 +19,8 @@
         </div>
         <ul class="nav navbar-nav">
           <li class="active"><a href="/admin">Admin</a></li>
-          <li><a href="/profile">Profil</a></li>
           <li><a href="/events">Arrangementer</a></li>
+          <li><a href="/profile">Profil</a></li>
           <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
@@ -52,13 +52,30 @@
       <li>
       <form action="/approve-deltakelse" method="post">
       <%= deltakelse[i].localName + " vil ha vakten " + deltakelse[i].rolleNavn + " på arrangementet " + deltakelse[i].navn %>
-                <input type="hidden" value="<%- deltakelse[i].users_id %>" name="approveDeltakelse">
+                <input type="hidden" value="<%- deltakelse[i].users_id %>" name="thisUser">
+                <input type="hidden" value="<%- deltakelse[i].arr_id %>" name="thisArr">
               <button type="submit" class="btn btn-success btn-lg">Godkjenn</button>
           </form>
         </li>
       <% } %>
       <% } %>
           </div>
+
+          <div class="jumbotron d-flex align-items-center">
+            <h2>Ikke godkjent kompetanse</h2>
+            <% for (let i=0; i<ikkeGodkjentKompetanse.length; i++) { %>
+            <% if (ikkeGodkjentKompetanse[i].isGodkjent === 0) { %>
+            <% ikkeGodkjentKompetanse[i].isGodkjent = "Ikke godkjent" %>
+            <li>
+            <form action="/approve-kompetanse" method="post">
+            <%= ikkeGodkjentKompetanse[i].localName + " vil legge til kompetansen " + ikkeGodkjentKompetanse[i].kompetanse_navn %>
+                      <input type="hidden" value="<%- ikkeGodkjentKompetanse[i].users_id %>" name="thisUser">
+                      <input type="hidden" value="<%- ikkeGodkjentKompetanse[i].kompetanse_navn %>" name="thisKompetanse">
+                    <button type="submit" class="btn btn-success btn-lg">Godkjenn</button>
+                </form>
+              </li>
+            <% } %>
+            <% } %>
 
     </div>
 

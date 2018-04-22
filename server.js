@@ -14,6 +14,29 @@ var morgan       = require('./node_modules/morgan/index.js');
 var cookieParser = require('./node_modules/cookie-parser/index.js');
 var bodyParser   = require('./node_modules/body-parser/index.js');
 var session      = require('./node_modules/express-session/index.js');
+const os = require('os');
+
+/*
+if (os.platform() === "darwin") {
+var exec = require('child_process').execFile;
+var fun =function(){
+   console.log("fun() start");
+   exec('./APP-darwin-x64/APP.app/Contents/MacOS/APP', function(err, data) {
+        console.log(err);
+        console.log(data.toString());
+    });
+};
+} else if (os.platform() === "win32") {
+  var exec = require('child_process').execFile;
+  var fun =function(){
+     console.log("fun() start");
+     exec('./APP-win32-x64/APP.exe', function(err, data) {
+          console.log(err);
+          console.log(data.toString());
+      });
+  };
+}
+fun(); */
 
 var configDB = require('./config/database.js');
 

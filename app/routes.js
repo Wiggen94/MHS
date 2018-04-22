@@ -18,7 +18,9 @@ module.exports = function(app, passport) {
     if (req.isAuthenticated()) {
       res.redirect('/profile');
     } else {
-      res.render('index.ejs');
+      res.render('index.ejs', {
+        message: req.flash('loginMessage')
+      });
     }
   });
 
@@ -33,6 +35,8 @@ module.exports = function(app, passport) {
       userService.getEvents((results) => {
         userService.getUser(req.user.id, (isAdmin) => {
           userService.getKompetanse(req.user.id, (kompetanse) => {
+            userService.getPastEvents((pastEvents) => {
+            userService.getThisVakter(req.user.id,(thisVakter) => {
             // En liste over definerte roller i henhold til kompetanse
             let roller = [{
                 key: "Sanitet",
@@ -52,11 +56,11 @@ module.exports = function(app, passport) {
               },
               {
                 key: "Båtfører",
-                krav: ["Hjelpkorpsprøve", "Båtførerprøven", "Maritimt VHF-sertifikat", "Videregående sjøredningskurs"]
+                krav: ["Hjelpekorpsprøve", "Maritimt VHF-sertifikat", "Båtførerprøven", "Videregående sjøredningskurs"]
               },
               {
                 key: "Båtmedhjelper",
-                krav: ["Hjelpkorpsprøve", "Ambulansesertifisering", "Kvalifisert sjøredningskurs"]
+                krav: ["Hjelpekorpsprøve", "Ambulansesertifisering", "Kvalifisert sjøredningskurs"]
               },
               {
                 key: "Båtmannskap",
@@ -103,14 +107,26 @@ module.exports = function(app, passport) {
               user: req.user,
               points: points,
               roller: roller,
-              muligRolle: muligRolle
+              muligRolle: muligRolle,
+              pastEvents: pastEvents,
+              thisVakter: thisVakter
             });
           });
         });
       });
     });
   });
+    });
+        });
 
+
+  // FUNKSJON FOR Å SLETTE EN KOMPETANSE
+  app.post('/remove-kompetanse', function(req, res) {
+    connection.query('DELETE FROM users_kompetanse WHERE users_id=? AND kompetanse_navn=?', [req.user.id, req.body.thisKompetanse], function(error, result) {
+      if (error) throw error;
+      res.redirect('/profile');
+    });
+  });
   // FUNKSJON FOR Å SLETTE ET ARRANGEMENT
   app.post('/remove-event', function(req, res) {
     connection.query('DELETE FROM Arrangement where arr_id=?', [req.body.removeEvent], function(error, result) {
@@ -132,22 +148,24 @@ module.exports = function(app, passport) {
     });
   });
   // FUNKSJON SOM HENTER DATA TIL BRUK FOR Å OPPDATERE BRUKER I DATABASEN
-  app.post('/edit-profile', function(req, res) {
-    userService.addKompetanse(req.user.id, req.body.addCompetence, req.body.gyldigFra, req.body.gyldigTil, (kompetanse) => {
-      if (req.body.changeName == "") {
-        req.body.changeName = req.user.local.name;
+  app.post('/edit-profile', function(req, res, user) {
+
+      if (req.body.changeName === "") {
+        req.body.changeName = req.body.thisName;
       }
-      if (req.body.changePhone == null) {
-        req.body.changePhone = req.user.local.phone;
+      if (req.body.changePhone == "") {
+        req.body.changePhone = req.body.thisPhone;
       }
-      if (req.body.changeEmail == "") {
-        req.body.changePhone = req.user.local.email;
+      if (req.body.changeEmail === "") {
+        req.body.changeEmail = req.body.thisEmail;
       }
-      Usermodel.findByIdAndUpdate(req.user.id, {
+      userService.addKompetanse(req.user.id, req.body.addCompetence, req.body.gyldigFra, req.body.gyldigTil, (kompetanse) => {
+      Usermodel.findByIdAndUpdate(req.body.thisUser, {
         local: {
           name: req.body.changeName,
-          phone: req.body.changePhone,
           email: req.body.changeEmail,
+          phone: req.body.changePhone,
+          bday: req.user.local.bday,
           password: req.user.local.password
         }
       }, function(err, response) {
@@ -156,20 +174,61 @@ module.exports = function(app, passport) {
     });
   });
 
+  //DEAKTIVER BRUKER
+  app.post('/deactivate-user', function(req, res) {
+    connection.query('UPDATE users_rettigheter SET isGodkjent=0 WHERE users_id=?', [req.body.thisUser], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/login');
+    });
+
+    //ENDRE EN ANNENS PROFIL
+    app.post('/change-profile', function(req, res) {
+      userService.getUser(req.user.id, (isAdmin) => {
+        if (isAdmin[0].isAdmin != 0) {
+        Usermodel.findOne({_id: req.body.thisUser}, function (err, user) {
+        res.render('editprofile.ejs', {
+          user: user,
+          isAdmin: isAdmin,
+          });
+        });
+      } else {
+        res.redirect('/profile');
+      }
+    });
+    });
+
   // ADMIN-PANEL ===========================
   app.get('/admin', function(req, res) {
+    userService.getUser(req.user.id, (isAdmin) => {
+      if (isAdmin[0].isAdmin === 0) {
+        res.redirect('/profile');
+      }
+    });
     userService.getIkkeGodkjenteBrukere((result) => {
+      userService.getIkkeGodkjentKompetanse((kompetanse) => {
     userService.getDeltakelse((deltakelse) => {
       res.render('admin.ejs', {
         ikkeGodkjent: result,
-        deltakelse: deltakelse
+        deltakelse: deltakelse,
+        ikkeGodkjentKompetanse: kompetanse
       });
     });
   });
+    });
   });
   // GODKJENNE BRUKERE
   app.post('/approve-user', function(req, res) {
     connection.query('UPDATE users_rettigheter SET isGodkjent=1 WHERE users_id=?', [req.body.approveUser], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/admin');
+
+  });
+
+  // GODKJENNE KOMPETANSE
+  app.post('/approve-kompetanse', function(req, res) {
+    connection.query('UPDATE users_kompetanse SET isGodkjent=1 WHERE users_id=? AND kompetanse_navn=?', [req.body.thisUser, req.body.thisKompetanse], function(error, result) {
       if (error) throw error;
     });
     res.redirect('/admin');
@@ -184,7 +243,7 @@ module.exports = function(app, passport) {
   });
   // GODKJENNE VAKT
   app.post('/approve-deltakelse', function(req, res) {
-    connection.query('UPDATE deltakelse SET isGodkjent=1 WHERE users_id=?', [req.body.approveDeltakelse], function(error, result) {
+    connection.query('UPDATE deltakelse SET isGodkjent=1 WHERE users_id=? AND arr_id=?', [req.body.thisUser, req.body.thisArr], function(error, result) {
       if (error) throw error;
     });
     res.redirect('/admin');
@@ -305,11 +364,16 @@ module.exports = function(app, passport) {
       }
     ];
     userService.getUser(req.user.id, (isAdmin) => {
+      // SJEKKER OM BRUKER ER ADMIN
+  if (isAdmin[0].isAdmin === 0) {
+       res.redirect('/profile');
+      }
       res.render('events.ejs', {
         user: req.user,
         eventMal: eventMal,
         isAdmin: isAdmin
       });
+
     });
   });
   app.get("/event/:arr_id", function(req, res) {
@@ -385,35 +449,52 @@ module.exports = function(app, passport) {
         }]
       }
     ];
-    userService.getEvents((results) => {
-      for (let event of results) {
-        this.event = results;
-      }
+    userService.getEvent(req.params.arr_id,(thisEvent) => {
+      userService.countDeltakelse(req.params.arr_id, (deltakelse) => {
+      userService.getThisDeltakelse(req.params.arr_id, (thisDeltakelse) => {
       userService.getUser(req.user.id, (isAdmin) => {
         res.render('event.ejs', {
           id: req.params.arr_id,
-          events: results,
+          event: thisEvent[0],
           isAdmin: isAdmin,
           eventMal: eventMal,
-          muligRolle: req.session.muligRolle
+          muligRolle: req.session.muligRolle,
+          deltakelse: deltakelse,
+          thisDeltakelse: thisDeltakelse,
+          user: req.user
         });
       });
-
+    });
+    });
     });
   });
 
+  // FUNKSJON SOM  FOR Å LEGGE TIL EN VAKT I DATABASEN
   app.post('/add-vakt', function(req, res) {
     connection.query('INSERT INTO deltakelse (arr_id, users_id, rolleNavn, poengMottatt) values (?, ?, ?, 10);', [req.body.thisEvent, req.user.id, req.body.addVakt], function(error, result) {
       if (error) throw error;
     });
+    connection.query('UPDATE users_poeng SET poeng=poeng+10 WHERE users_id=?;', [req.user.id], function(error, result) {
+      if (error) throw error;
+    });
     res.redirect('/profile');
-
+  });
+  // FUNKSJON SOM  FOR Å TA BORT EN VAKT I DATABASEN
+  app.post('/remove-deltakelse', function(req, res) {
+    connection.query('DELETE FROM deltakelse WHERE users_id=? AND arr_id=?', [req.body.thisUser, req.body.thisArr], function(error, result) {
+      if (error) throw error;
+    });
+    connection.query('UPDATE users_poeng SET poeng=poeng-10 WHERE users_id=?;', [req.body.thisUser], function(error, result) {
+      if (error) throw error;
+    });
+    res.redirect('/profile');
   });
 
-  // OPRETTE ARRANGEMENTER ==========================
 
+  // OPRETTE ARRANGEMENTER ==========================
+  // FUNKSJON SOM  FOR Å LEGGE TIL ET ARRANGEMENT I DATABASEN
   app.post('/add-event', function(req, res) {
-    connection.query('INSERT INTO Arrangement (navn, fraDato, tilDato, startTid, sluttTid, postSted, adresse) values (?, ?, ?, ?, ?, ?, ?);', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.fromTime, req.body.toTime, req.body.poststed, req.body.adresse], function(error, result) {
+    connection.query('INSERT INTO Arrangement (navn, fraDato, tilDato, startTid, sluttTid, postSted, adresse, kontaktPerson, beskrivelse, eventKrav) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [req.body.eventName, req.body.fromDate, req.body.toDate, req.body.fromTime, req.body.toTime, req.body.poststed, req.body.adresse, req.body.kontaktPerson, req.body.beskrivelse, req.body.vaktmal], function(error, result) {
       if (error) throw error;
     });
     res.redirect('/profile');
@@ -562,9 +643,6 @@ module.exports = function(app, passport) {
   // ===========================================================================
   // UNLINK ACCOUNTS ===========================================================
   // ===========================================================================
-  // used to unlink accounts. for social accounts, just remove the token
-  // for local account, remove email and password
-  // user account will stay active in case they want to reconnect in the future
 
   // local -----------------------------------
   app.get('/unlink/local', function(req, res) {
@@ -596,8 +674,10 @@ module.exports = function(app, passport) {
 };
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated())
+  userService.getUser(req.user.id, (isGodkjent) => {
+  if (req.isAuthenticated() && isGodkjent[0].isGodkjent == 1) {
     return next();
-
+}
   res.redirect('/');
+  });
 }

@@ -20,9 +20,9 @@
         <ul class="nav navbar-nav">
           <% if (isAdmin[0].isAdmin === 1) { %>
           <li><a href="/admin">Admin</a></li>
+          <li><a href="/events">Arrangementer</a></li>
           <% } %>
           <li><a href="/profile">Profil</a></li>
-          <li><a href="/events">Arrangementer</a></li>
           <li><a href="/search">Søk</a></li>
           <li><a href="/contact">Kontakt</a></li>
           <li><a href="/logout">Logg ut</a></li>
@@ -30,60 +30,81 @@
       </div>
     </nav>
     <div class="jumbotron d-flex align-items-center">
-      <h2><%- events[id].navn %></h2>
+      <h2><%- event.navn %></h2>
       <ul>
 
 
       <li>
-        Fra dato: <%- events[id].fraDato.toDateString() %>
+        Fra dato: <%- event.fraDato.toDateString() %>
       </li>
       <li>
-        Til dato: <%- events[id].tilDato.toDateString() %>
+        Til dato: <%- event.tilDato.toDateString() %>
       </li>
       <li>
-        Fra kl: <%- events[id].startTid.replace(':00','') %>
+        Fra kl: <%- event.startTid.replace(':00','') %>
       </li>
       <li>
-        Til kl: <%- events[id].sluttTid.replace(':00','') %>
+        Til kl: <%- event.sluttTid.replace(':00','') %>
       </li>
+      <li>
+        Beskrivelse: <%- event.beskrivelse %>
+      </li>
+      <li>
+        Kontaktperson: <%- event.kontaktPerson %>
+      </li>
+
 
       <% let rolleKravList = []; %>
       <% let availableList = []; %>
-      <% for (let x of eventMal[events[id].eventKrav].krav) { %>
-      <% if (x.antall === 0) { %>
-      <% continue; %>
+      <% let takenList = []; %>
+      <% let deltarList = []; %>
+      <% for (let i=0; i<deltakelse.length; i++) { %>
+      <% takenList.push(deltakelse[i].rolleNavn) %>
+      <% } %>
+      <% for (let x of eventMal[event.eventKrav].krav) { %>
+      <% if (takenList.indexOf(x.rolle) >= 0) { %>
+      <% x.antall-- %>
+      <% rolleKravList.push(" " + x.antall +"stk " + x.rolle); %>
       <% } else { %>
       <% rolleKravList.push(" " + x.antall +"stk " + x.rolle); %>
-      <% x.antall--; %>
       <% } %>
-      <% if (muligRolle.indexOf(" " + x.rolle) >= 0) { %>
+      <% if ((muligRolle.indexOf(" " + x.rolle) >= 0) && x.antall !=0) { %>
       <% availableList.push(x.rolle); %>
       <% } %>
       <% } %>
       <li>
         Ledige vakter:
-          <%= rolleKravList %>
+          <%= rolleKravList %> </br>
       </li>
-      <li>  <form action="/add-vakt" method="post">
-          <div class="form-group">
-                  <input type="hidden" value="<%- events[id].arr_id %>" name="thisEvent">
-              <label>Du kan ta følgende vakter:</label>
-              <select name="addVakt">
-                <% for (let i=0; i<availableList.length; i++) { %>
-                <option>
-                  <%= availableList[i] %>
-                </option>
-                                <% } %>
-              </select>
-          </div>
-            <button type="submit" class="btn btn-warning btn-lg">Ta vakt</button>
+      <% for (let i=0; i<thisDeltakelse.length; i++) { %>
+      <% deltarList.push(thisDeltakelse[i].localName) %>
+      <% if (isAdmin[0].isAdmin === 1 || thisDeltakelse[i].users_id === user.id) { %>
+        <form action="/remove-deltakelse" method="post">
+              <%= thisDeltakelse[i].localName + " har tatt vakt som " + thisDeltakelse[i].rolleNavn %>
+              <input type="hidden" value="<%-  thisDeltakelse[i].users_id %>" name="thisUser">
+              <input type="hidden" value="<%- thisDeltakelse[i].arr_id %>" name="thisArr">
+            <button type="submit" class="btn btn-danger btn-xs">x</button>
         </form>
-
-
-      </li>
+      <% } else { thisDeltakelse[i].localName + " har tatt vakt som " + thisDeltakelse[i].rolleNavn } } %>
+      <% if (deltarList.indexOf(user.local.name) >=0) { %>
+      <% } else { %>
+        <li> <form action="/add-vakt" method="post">
+            <div class="form-group">
+                    <input type="hidden" value="<%- event.arr_id %>" name="thisEvent">
+                <label>Du kan ta følgende vakter:</label>
+                <select name="addVakt">
+                  <% for (let i=0; i<availableList.length; i++) { %>
+                  <option>
+                    <%= availableList[i] %>
+                  </option>
+                                  <% } %>
+                </select>
+            </div>
+              <button type="submit" class="btn btn-warning btn-lg">Ta vakt</button>
+          </form>
+        </li>
+        <% } %>
       </ul>
-
-
     </div>
   </div>
 
