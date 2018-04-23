@@ -5,7 +5,7 @@
     "win": "start npm run server && momy --config momyfile.json --import",
     "mac": "node server.js & momy --config momyfile.json --import",
     "momy": "momy --config momyfile.json --import",
-    "dev": "start npm run start1 & start npm run momy",
+    "dev": "start npm run start1 & start npm run momy"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
