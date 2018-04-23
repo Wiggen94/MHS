@@ -1,9 +1,11 @@
 {
   "name": "MHS",
   "scripts": {
-    "start1": "nodemon server.js",
+    "server":"node server.js",
+    "win": "start npm run server && momy --config momyfile.json --import",
+    "mac": "start server.js & momy --config momyfile.json --import",
     "momy": "momy --config momyfile.json --import",
-    "dev": "start npm run start1 && start npm run momy",
+    "dev": "start npm run start1 & start npm run momy",
     "preinstall": "npm i -g nodemon"
   },
   "dependencies": {
@@ -32,9 +34,5 @@
     "passport-google-oauth": "~1.0.0",
     "passport-local": "~1.0.0",
     "passport-twitter": "~1.0.4"
-  },
-  "pkg": {
-    "scripts": "app/**/*",
-    "assets": "views/*"
   }
 }

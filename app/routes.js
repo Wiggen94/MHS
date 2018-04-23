@@ -159,14 +159,14 @@ module.exports = function(app, passport) {
       if (req.body.changeEmail === "") {
         req.body.changeEmail = req.body.thisEmail;
       }
-      userService.addKompetanse(req.user.id, req.body.addCompetence, req.body.gyldigFra, req.body.gyldigTil, (kompetanse) => {
+      userService.addKompetanse(req.body.thisUser, req.body.addCompetence, req.body.gyldigFra, req.body.gyldigTil, (kompetanse) => {
       Usermodel.findByIdAndUpdate(req.body.thisUser, {
         local: {
           name: req.body.changeName,
           email: req.body.changeEmail,
           phone: req.body.changePhone,
-          bday: req.user.local.bday,
-          password: req.user.local.password
+          bday: req.body.thisBday,
+          password: req.body.thisPassword
         }
       }, function(err, response) {
         res.redirect('/profile');

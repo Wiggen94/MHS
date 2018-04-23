@@ -4,7 +4,8 @@ var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 var moment = require('moment');
 
-// define the schema for our user model
+// definerer Schema til bruk i Passport for å opprette brukere.
+// brukere blir dermed synkronisert til MySQL ved hjelp av Momy.
 var userSchema = mongoose.Schema({
 
     local            : {
