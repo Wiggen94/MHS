@@ -3,10 +3,9 @@
   "scripts": {
     "server":"node server.js",
     "win": "start npm run server && momy --config momyfile.json --import",
-    "mac": "start server.js & momy --config momyfile.json --import",
+    "mac": "node server.js & momy --config momyfile.json --import",
     "momy": "momy --config momyfile.json --import",
     "dev": "start npm run start1 & start npm run momy",
-    "preinstall": "npm i -g nodemon"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
